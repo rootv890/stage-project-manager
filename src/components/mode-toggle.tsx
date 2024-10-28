@@ -14,7 +14,7 @@ export function ModeToggle() {
     <div className=" ">
       <div
         className={cn(
-          "flex items-center justify-center gap-1 border rounded-full transition-all ease-in    bg-accent/30     ",
+          "flex items-center justify-center  border rounded-full transition-all ease-in    bg-accent/30     ",
           theme === "system" ? "border-primary/10" : ""
         )}
       >
@@ -24,7 +24,7 @@ export function ModeToggle() {
             setTheme("dark");
           }}
           className={cn(
-            "aspect-square rounded-full",
+            "aspect-square rounded-l-full rounded-r-md",
             cn(theme === "dark" ? "bg-foreground/10" : "")
           )}
         >
@@ -36,7 +36,7 @@ export function ModeToggle() {
             setTheme("light");
           }}
           className={cn(
-            "aspect-square rounded-full",
+            "aspect-square  rounded-none",
             theme === "light" ? "bg-foreground/10" : ""
           )}
         >
@@ -48,7 +48,7 @@ export function ModeToggle() {
             setTheme("system");
           }}
           className={cn(
-            "aspect-square rounded-full",
+            "aspect-square rounded-r-full rounded-l-md",
             theme === "system" ? "bg-foreground/10" : ""
           )}
         >

@@ -78,7 +78,7 @@
 
 @layer components {
   input {
-    @apply text-foreground block  border-b w-full border-foreground/50  ring-0 active:ring-0 outline-none my-2 focus:border-b-primary focus:ring-ring bg-transparent focus:border-dashed
+    @apply font-geist-mono text-foreground block  border-b w-full border-foreground/50  ring-0 active:ring-0 outline-none my-2 focus:border-b-primary focus:ring-ring bg-transparent focus:border-dashed
     placeholder:text-zinc-500 focus:placeholder:text-zinc-400 py-2 px-3
     !important;
   }
@@ -90,4 +90,6 @@
   .max-custom-width {
     @apply max-w-screen-lg mx-auto;
   }
+
+  /* Clerk UI */
 }

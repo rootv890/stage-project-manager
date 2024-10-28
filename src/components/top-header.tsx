@@ -1,17 +1,10 @@
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignOutButton,
-  SignUpButton,
-  useAuth,
-  UserButton,
-} from "@clerk/clerk-react";
+import { useAuth } from "@clerk/clerk-react";
 import { Button } from "./ui/button";
 import { ModeToggle } from "./mode-toggle";
 import Logo from "./logo";
 import { useNavigate } from "react-router-dom";
 import Loader from "./loader";
+import UserButton from "./user-button";
 
 function TopHeader() {
   const { isSignedIn, isLoaded } = useAuth();
@@ -66,7 +59,7 @@ function TopHeader() {
           </div>
         )}
         {isSignedIn && (
-          <div className="ml-3">
+          <div className="ml-3 flex gap-1">
             <UserButton />
           </div>
         )}

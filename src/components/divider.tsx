@@ -1,9 +1,11 @@
+import { Separator } from "./ui/separator";
+
 const Divider = () => {
   return (
-    <div className="flex items-center justify-center text-muted-foreground gap-6 w-full px-4">
-      <div className="w-full border px-4" />
+    <div className="flex items-center justify-center text-muted-foreground gap-6 w-full  overflow-hidden px-4">
+      <Separator orientation="horizontal" />
       <span>or</span>
-      <div className="w-full border px-4" />
+      <Separator orientation="horizontal" />
     </div>
   );
 };

@@ -4,6 +4,10 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        geist: ["Geist", "sans-serif"], // Default sans-serif fallback
+        "geist-mono": ["GeistMono", "monospace"], // Default monospace fallback
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -51,6 +55,11 @@ export default {
           5: "hsl(var(--chart-5))",
         },
       },
+    },
+    fontFamily: {
+      sans: ["Geist", "sans-serif"],
+      serif: ["Geist", "serif"],
+      mono: ["GeistMono", "monospace"],
     },
   },
   plugins: [require("tailwindcss-animate")],
