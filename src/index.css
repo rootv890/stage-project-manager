@@ -90,6 +90,4 @@
   .max-custom-width {
     @apply max-w-screen-lg mx-auto;
   }
-
-  /* Clerk UI */
 }
