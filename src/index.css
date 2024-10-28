@@ -67,3 +67,27 @@
     @apply bg-background text-foreground;
   }
 }
+
+.custom-dashed-border {
+  border-style: dashed;
+  border-width: 2px; /* Adjust the thickness of the border */
+  border-image: linear-gradient(to right, currentColor 33%, rgba(0, 0, 0, 0) 0%)
+    1;
+  border-image-slice: 1; /* Ensures that the gradient repeats along the border */
+}
+
+@layer components {
+  input {
+    @apply text-foreground block  border-b w-full border-foreground/50  ring-0 active:ring-0 outline-none my-2 focus:border-b-primary focus:ring-ring bg-transparent focus:border-dashed
+    placeholder:text-zinc-500 focus:placeholder:text-zinc-400 py-2 px-3
+    !important;
+  }
+
+  section div {
+    @apply w-full;
+  }
+
+  .max-custom-width {
+    @apply max-w-screen-lg mx-auto;
+  }
+}

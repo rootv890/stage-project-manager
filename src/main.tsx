@@ -2,52 +2,72 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
-
-import { ClerkProvider } from "@clerk/clerk-react";
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Outlet,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import Contact from "./pages/contact.tsx";
 import PageNotFound from "./pages/error-404.tsx";
-import TopHeader from "./components/top-header.tsx";
-import { ThemeProvider } from "./components/theme-provider.tsx";
 import AboutMember from "./pages/about/about-member.tsx";
-const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-console.log("clerkPublishableKey", clerkPublishableKey);
-if (!clerkPublishableKey) {
-  throw new Error("Missing Clerk Publishable Key");
-}
+import SignIn from "./pages/auth/sign-in.tsx";
+import RootLayout from "./layout.tsx";
+import SignUp from "./pages/auth/sign-up.tsx";
+import ResetPassword from "./pages/auth/reset-password.tsx";
+
+import Onboarding from "./pages/auth/on-boarding.tsx";
+import SSOCallback from "./pages/auth/sso-callback.tsx";
+import { CompleteSignUp } from "./pages/auth/complete-sign-up.tsx";
 
 /**
  * React Router
  */
-
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <App />,
+    element: <RootLayout />,
     errorElement: <PageNotFound />,
-  },
-  {
-    path: "/contact",
-    element: <Contact />,
-  },
-  {
-    path: "/about",
-    element: (
-      <div>
-        About
-        <Outlet />
-      </div>
-    ),
-    // nesting routes
     children: [
       {
-        path: ":memberId",
-        element: <AboutMember />,
+        path: "/",
+        element: <App />,
+      },
+      {
+        path: "/contact",
+        element: <Contact />,
+      },
+      {
+        path: "/about",
+        element: (
+          <div>
+            About
+            <Outlet />
+          </div>
+        ),
+        children: [
+          {
+            path: ":memberId",
+            element: <AboutMember />,
+          },
+        ],
+      },
+      // Auth routes
+      {
+        path: "/sign-in",
+        element: <SignIn />,
+      },
+      {
+        path: "/sign-up",
+        element: <SignUp />,
+        errorElement: <PageNotFound />,
+      },
+      {
+        path: "/forgot-password",
+        element: <ResetPassword />,
+      },
+      // SSO Callback route
+      {
+        path: "/sso-callback",
+        element: <SSOCallback />,
+      },
+      {
+        path: "/complete-sign-up",
+        element: <CompleteSignUp />,
       },
     ],
   },
@@ -55,11 +75,6 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ClerkProvider publishableKey={clerkPublishableKey} afterSignOutUrl={"/"}>
-      <ThemeProvider defaultTheme="dark" storageKey="stage-ui-theme">
-        <TopHeader />
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </ClerkProvider>
+    <RouterProvider router={router} />
   </StrictMode>
 );
