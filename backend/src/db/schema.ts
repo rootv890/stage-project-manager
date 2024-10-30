@@ -15,7 +15,6 @@ export const Users = pgTable("users", {
   username: varchar("username").unique().notNull(),
   email: varchar("email").unique().notNull(),
   image_url: varchar("image_url"),
-  passwordHash: varchar("password_hash"), // Optional
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -60,8 +59,8 @@ export const Courses = pgTable("courses", {
   title: varchar("title").notNull(),
   description: varchar("description"),
   websiteLink: varchar("website_link").notNull(),
-  imageUrl: varchar("image_url").notNull(),
-  duration: varchar("duration").notNull(), // in minutes
+  imageUrl: varchar("image_url"),
+  duration: varchar("duration"), // in minutes
   status: statusEnum("status").notNull().default("PENDING"),
   progress: integer("progress").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow(),

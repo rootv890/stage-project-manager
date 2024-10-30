@@ -28,7 +28,6 @@ async function seedToDb() {
       username: "gidda",
       createdAt: new Date(),
       updatedAt: new Date(),
-      passwordHash: "password",
     },
 
     {
@@ -43,7 +42,6 @@ async function seedToDb() {
       username: "putta",
       createdAt: new Date(),
       updatedAt: new Date(),
-      passwordHash: "password",
     },
   ];
 
