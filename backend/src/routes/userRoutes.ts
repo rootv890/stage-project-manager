@@ -1,7 +1,5 @@
 import express from "express";
-import db from "../db/db";
-import { Users } from "../db/schema";
-import { InferInsertModel } from "drizzle-orm";
+
 import {
   addNewUser,
   deleteUser,
@@ -18,9 +16,12 @@ router.get("/", (req, res) => {
   getAllUsers(req, res);
 });
 
-router.get("/:id", (req, res) => {
-  getUserById(req, res);
-});
+// router.get("/:id", (req, res) => {
+//   getUserById(req, res);
+// });
+
+router.get("/:id", getUserById);
+
 router.get("/name/:username", (req, res) => {
   getUserByUsername(req, res);
 });

@@ -8,6 +8,7 @@ import helmet from "helmet";
 import userRouter from "./routes/userRoutes";
 import courseRouter from "./routes/courseRoutes";
 import mentorRouter from "./routes/mentorRoutes";
+import userCourseRouter from "./routes/userCourseRoutes";
 
 const config = {
   port: process.env.PORT || 3000,
@@ -29,6 +30,7 @@ app.use("/api/test", (req, res) => {
 app.use("/api/users", userRouter);
 app.use("/api/courses", courseRouter);
 app.use("/api/mentors", mentorRouter);
+app.use("/api/usercourses", userCourseRouter);
 
 app.get("/", (req, res) => {
   res.send("Stage : The Course Manager Home");

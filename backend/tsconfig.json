@@ -5,7 +5,9 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true, // Added for faster compilation
+    "forceConsistentCasingInFileNames": true // Added to avoid casing issues
   },
   "include": ["./src/**/*.ts"],
   "exclude": ["node_modules"]
