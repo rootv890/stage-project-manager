@@ -8,20 +8,20 @@ import {
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  getAllMentors(req, res);
+router.get("/", async (req, res) => {
+  await getAllMentors(req, res);
 });
 
-router.post("/add", (req, res) => {
-  createMentor(req, res);
+router.post("/add", async (req, res) => {
+  await createMentor(req, res);
 });
 
-router.get("/:id", (req, res) => {
-  getMentorById(req, res);
+router.get("/:id", async (req, res) => {
+  await getMentorById(req, res);
 });
 
-router.delete("/:id", (req, res) => {
-  deleteMentor(req, res);
+router.delete("/:id", async (req, res) => {
+  await deleteMentor(req, res);
 });
 
 export default router;

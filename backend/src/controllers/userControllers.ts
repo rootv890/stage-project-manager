@@ -215,7 +215,7 @@ export const deleteUser = async (req: Request, res: Response) => {
   }
 };
 
-export const getUserById = async (req: any, res: any) => {
+export const getUserById = async (req: Request, res: Response) => {
   console.log("Wokring");
   const { id } = req.params;
   if (!id) {

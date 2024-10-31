@@ -9,6 +9,7 @@ import userRouter from "./routes/userRoutes";
 import courseRouter from "./routes/courseRoutes";
 import mentorRouter from "./routes/mentorRoutes";
 import userCourseRouter from "./routes/userCourseRoutes";
+import mentorCourseRouter from "./routes/mentorCourseRoutes";
 
 const config = {
   port: process.env.PORT || 3000,
@@ -31,6 +32,7 @@ app.use("/api/users", userRouter);
 app.use("/api/courses", courseRouter);
 app.use("/api/mentors", mentorRouter);
 app.use("/api/usercourses", userCourseRouter);
+app.use("/api/mentorcourses", mentorCourseRouter);
 
 app.get("/", (req, res) => {
   res.send("Stage : The Course Manager Home");

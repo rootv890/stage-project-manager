@@ -12,30 +12,28 @@ import {
 const router = express.Router();
 
 // Get all users
-router.get("/", (req, res) => {
-  getAllUsers(req, res);
+router.get("/", async (req, res) => {
+  await getAllUsers(req, res);
 });
 
-// router.get("/:id", (req, res) => {
-//   getUserById(req, res);
-// });
-
-router.get("/:id", getUserById);
-
-router.get("/name/:username", (req, res) => {
-  getUserByUsername(req, res);
+router.get("/:id", async (req, res) => {
+  await getUserById(req, res);
 });
 
-router.post("/addNew", (req, res) => {
-  addNewUser(req, res);
+router.get("/name/:username", async (req, res) => {
+  await getUserByUsername(req, res);
 });
 
-router.put("/update/:id", (req, res) => {
-  updateUser(req, res);
+router.post("/addNew", async (req, res) => {
+  await addNewUser(req, res);
 });
 
-router.delete("/delete/:id", (req, res) => {
-  deleteUser(req, res);
+router.put("/update/:id", async (req, res) => {
+  await updateUser(req, res);
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  await deleteUser(req, res);
 });
 
 export default router;
