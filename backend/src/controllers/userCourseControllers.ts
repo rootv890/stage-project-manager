@@ -4,37 +4,66 @@ import { Courses, UserCourses } from "../db/schema";
 import { and, eq, InferSelectModel } from "drizzle-orm";
 import {
   getPaginatedAllUserCourses,
-  getPaginatedUserCoursesById,
-} from "../pagination/pagination";
+  PaginatedParams,
+} from "../pagination/userCoursePagination";
 
+/** JSDOC
+ * @description Get all user courses
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Promise<Response>}
+ * @async
+ * @route /api/user-courses
+ * @method GET
+ * @example  /api/usercourses?orderBy=userId&order=asc&limit=25&page=1
+ */
 export const getAllUserCourses = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.pageSize) || 10;
+  const limit = Number(req.query.limit) || 10;
   const orderBy = req.query.orderBy || "id";
   const order = req.query.order || "desc";
 
   try {
-    const courses = await db.select().from(UserCourses);
-    const paginatedCourse = await getPaginatedAllUserCourses(
+    const paginatedCourse = await getPaginatedAllUserCourses({
       page,
       limit,
-      orderBy as keyof InferSelectModel<typeof UserCourses>,
-      order as "asc" | "desc"
-    );
+      orderBy: orderBy as PaginatedParams["orderBy"], // Type assertion
+      order: order as "asc" | "desc",
+    });
+
+    if (paginatedCourse.data.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No courses found",
+      });
+    }
 
     return res.status(200).json({
-      status: "success",
+      success: true,
       data: paginatedCourse,
       message: "Courses fetched successfully",
     });
   } catch (error) {
-    console.error(error);
-    return res.status(400).json({ error: "Error getting user-courses" });
+    return res.status(400).json({
+      success: false,
+      message: "Error getting user-courses",
+    });
   }
 };
+
+/**
+ * @description Get all user courses by user ID
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Promise<Response>}
+ * @async
+ * @route /api/user-courses/:userId
+ * @method GET
+ * @example /api/user-courses/1?orderBy=courseId&order=asc&limit=25&page=1
+ */
 
 export const getAllUserCoursesById = async (
   req: Request,
@@ -44,7 +73,10 @@ export const getAllUserCoursesById = async (
   const userIdNum = Number(userId);
 
   if (isNaN(userIdNum)) {
-    return res.status(400).json({ error: "Invalid user id" });
+    return res.status(400).json({
+      success: false,
+      message: "Invalid user id",
+    });
   }
 
   const page = Number(req.query.page) || 1;
@@ -52,84 +84,95 @@ export const getAllUserCoursesById = async (
   const orderBy = req.query.orderBy || "id";
   const order = req.query.order || "desc";
 
-  console.log(req.query);
-
-  const getUserCourse = getPaginatedUserCoursesById(
-    userIdNum,
-    page,
+  const getUserCourse = await getPaginatedAllUserCourses({
     limit,
-    orderBy as keyof InferSelectModel<typeof UserCourses>,
-    order as "asc" | "desc"
-  );
+    page,
+    orderBy: orderBy as PaginatedParams["orderBy"],
+    order: order as "asc" | "desc",
+    userId: userIdNum,
+  });
+
+  if (getUserCourse.data.length === 0) {
+    return res.status(404).json({
+      success: false,
+      message: "No user courses found",
+    });
+  }
 
   try {
-    const userCourses = await getUserCourse;
+    const userCourses = getUserCourse;
 
     return res.status(200).json({
-      status: "success",
+      success: true,
       data: userCourses,
       message: "User courses fetched successfully",
     });
   } catch (error) {
-    console.error(error);
-    return res.status(400).json({ error: "Error getting user-courses" });
+    return res.status(400).json({
+      success: false,
+      message: "Error getting user-courses",
+    });
   }
 };
 
-export const getUserCourse = async (req: Request, res: Response) => {
+export const getUserCourseByUCids = async (req: Request, res: Response) => {
   const { userId, courseId, mentorId } = req.params;
 
   const userIdNum = Number(userId);
   const courseIdNum = Number(courseId);
-  const mentorIdNum = Number(mentorId);
 
-  if (isNaN(userIdNum) || isNaN(courseIdNum) || isNaN(mentorIdNum)) {
-    return res
-      .status(400)
-      .json({ error: "Invalid user id, course id, or mentor id" });
+  if (isNaN(userIdNum) || isNaN(courseIdNum)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid user id, course id, or mentor id",
+    });
   }
 
   try {
-    const userCourse = await db
+    const [mentor] = await db
       .select({
-        courseId: UserCourses.courseId,
-        mentorId: UserCourses.mentorId,
-        status: UserCourses.status,
-        progress: UserCourses.progress,
-        courseTitle: Courses.title,
-        courseDescription: Courses.description,
-        websiteLink: Courses.websiteLink,
-        imageUrl: Courses.imageUrl,
-        duration: Courses.duration,
-        courseStatus: Courses.status,
-        courseProgress: Courses.progress,
+        id: Courses.mentorId,
       })
-      .from(UserCourses)
-      .innerJoin(Courses, eq(UserCourses.courseId, Courses.id))
-      .where(
-        and(
-          eq(UserCourses.userId, userIdNum),
-          eq(UserCourses.courseId, courseIdNum),
-          eq(UserCourses.mentorId, mentorIdNum)
-        )
-      );
+      .from(Courses)
+      .where(eq(Courses.id, courseIdNum));
 
-    if (userCourse.length === 0) {
+    if (mentor === undefined) {
       return res.status(404).json({
-        message: `User course not found`,
-        data: [],
+        success: false,
+        message: "Mentor not found",
+      });
+    }
+
+    const mentorIdNum = Number(mentor.id);
+
+    const userCourse = await getPaginatedAllUserCourses({
+      userId: userIdNum,
+      courseId: courseIdNum,
+      mentorId: mentorIdNum,
+      limit: 1,
+      page: 1,
+      orderBy: "id",
+      order: "asc",
+    });
+
+    const courses = userCourse;
+
+    if (courses.data.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "User course not found",
       });
     }
 
     return res.status(200).json({
-      message: `User course retrieved successfully`,
-      data: userCourse,
+      success: true,
+      message: "User course found",
+      data: courses.data[0],
     });
   } catch (error) {
-    console.error("Error fetching user course", error);
     return res.status(500).json({
+      success: false,
       message: "Error fetching user course",
-      error,
     });
   }
 };
@@ -138,13 +181,12 @@ export const createUserCourse = async (req: Request, res: Response) => {
   const {
     userId,
     courseId,
-    mentorId,
     status,
     progress,
   }: Partial<InferSelectModel<typeof UserCourses>> = req.body;
 
-  if (!userId || !courseId || !mentorId) {
-    return res.status(400).send("userId, courseId, and mentorId are required");
+  if (!userId || !courseId) {
+    return res.status(400).send("userId, courseId  are required");
   }
 
   try {
@@ -153,11 +195,7 @@ export const createUserCourse = async (req: Request, res: Response) => {
       .select()
       .from(UserCourses)
       .where(
-        and(
-          eq(UserCourses.userId, userId),
-          eq(UserCourses.courseId, courseId),
-          eq(UserCourses.mentorId, mentorId)
-        )
+        and(eq(UserCourses.userId, userId), eq(UserCourses.courseId, courseId))
       );
 
     if (existingUserCourse.length > 0) {
@@ -166,38 +204,57 @@ export const createUserCourse = async (req: Request, res: Response) => {
       });
     }
 
+    // get mentorId from course
+    const [mentorId] = await db
+      .select({
+        id: Courses.mentorId,
+      })
+      .from(Courses)
+      .where(eq(Courses.id, courseId));
+
+    if (!mentorId) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found",
+      });
+    }
+
     await db.insert(UserCourses).values({
       userId,
       courseId,
-      mentorId,
+      mentorId: mentorId.id,
       status: status || "PENDING",
       progress: progress || 0,
     });
 
     return res.status(201).json({
+      data: {
+        userId,
+        courseId,
+        mentorId: mentorId.id,
+        status: status || "PENDING",
+        progress: progress || 0,
+      },
       message: "User course created successfully",
     });
   } catch (error) {
-    console.error("Error creating user course", error);
     return res.status(500).json({
       message: "Error creating user course",
-      error,
     });
   }
 };
 
 export const updateUserCourse = async (req: Request, res: Response) => {
-  const { userId, courseId, mentorId } = req.params;
-
+  const { userId, courseId } = req.params;
   const userIdNum = Number(userId);
   const courseIdNum = Number(courseId);
-  const mentorIdNum = Number(mentorId);
 
   // Validate IDs
-  if (isNaN(userIdNum) || isNaN(courseIdNum) || isNaN(mentorIdNum)) {
-    return res
-      .status(400)
-      .json({ error: "Invalid user id, course id, or mentor id" });
+  if (isNaN(userIdNum) || isNaN(courseIdNum)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid user id or course id",
+    });
   }
 
   // Check if status or progress is provided
@@ -205,97 +262,98 @@ export const updateUserCourse = async (req: Request, res: Response) => {
     req.body;
 
   if (!status && !progress) {
-    return res.status(400).json({ error: "status or progress is required" });
+    return res.status(400).json({
+      success: false,
+      message: "Status or progress is required",
+    });
   }
 
   try {
-    // Start a transaction
-    await db.transaction(async (trx) => {
-      const existingUserCourse = await trx
-        .select()
-        .from(UserCourses)
-        .where(
-          and(
-            eq(UserCourses.userId, userIdNum),
-            eq(UserCourses.courseId, courseIdNum),
-            eq(UserCourses.mentorId, mentorIdNum)
-          )
-        );
+    // Fetch the existing user course without transaction
+    const existingUserCourse = await db
+      .select()
+      .from(UserCourses)
+      .where(
+        and(
+          eq(UserCourses.userId, userIdNum),
+          eq(UserCourses.courseId, courseIdNum)
+        )
+      );
 
-      if (existingUserCourse.length === 0) {
-        return res.status(404).json({ message: "User course not found" });
-      }
-
-      // Check for changes before updating
-      const currentStatus = existingUserCourse[0].status;
-      const currentProgress = existingUserCourse[0].progress;
-
-      // Set new values only if they differ from current values
-      const newStatus = status || currentStatus;
-      const newProgress =
-        status === "COMPLETED" ? 100 : progress || currentProgress;
-
-      // If no changes are detected, return a message
-      if (newStatus === currentStatus && newProgress === currentProgress) {
-        return res
-          .status(400)
-          .json({ message: "No changes detected. Please provide new values." });
-      }
-
-      // Update the user course
-      await trx
-        .update(UserCourses)
-        .set({
-          status: newStatus,
-          progress: newProgress,
-          updatedAt: new Date(),
-        })
-        .where(
-          and(
-            eq(UserCourses.userId, userIdNum),
-            eq(UserCourses.courseId, courseIdNum),
-            eq(UserCourses.mentorId, mentorIdNum)
-          )
-        );
-
-      // Fetch the course name
-      const courseName = await trx
-        .select({ title: Courses.title })
-        .from(Courses)
-        .where(eq(Courses.id, courseIdNum));
-
-      // Send response with updated course information
-      return res.status(200).json({
-        message: "User course updated successfully",
-        data: {
-          updatedCourse: courseName[0].title,
-        },
+    if (existingUserCourse.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "User course not found",
       });
+    }
+
+    const mentorIdNum = Number(existingUserCourse[0].mentorId);
+
+    // Check for changes before updating
+    const currentStatus = existingUserCourse[0].status;
+    const currentProgress = existingUserCourse[0].progress;
+
+    // Set new values only if they differ from current values
+    const newStatus = status || currentStatus;
+    const newProgress =
+      status === "COMPLETED" ? 100 : progress || currentProgress;
+
+    // If no changes are detected, return a message
+    if (newStatus === currentStatus && newProgress === currentProgress) {
+      return res.status(400).json({
+        success: false,
+        message: "No changes detected. Please provide new values.",
+      });
+    }
+
+    // Update the user course without transaction
+    await db
+      .update(UserCourses)
+      .set({
+        status: newStatus,
+        progress: newProgress,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(UserCourses.userId, userIdNum),
+          eq(UserCourses.courseId, courseIdNum),
+          eq(UserCourses.mentorId, mentorIdNum)
+        )
+      );
+
+    // Send response with updated course information
+    return res.status(200).json({
+      success: true,
+      data: {
+        userId: userIdNum,
+        courseId: courseIdNum,
+        mentorId: mentorIdNum,
+        status: newStatus,
+        progress: newProgress,
+      },
+      message: "User course updated successfully",
     });
   } catch (error) {
-    console.error("Error updating user course", error);
     return res.status(500).json({
+      success: false,
       message: "Error updating user course",
-      error,
     });
   }
 };
+
 export const deleteUserCourse = async (req: Request, res: Response) => {
-  console.log("Delete user course");
-  const { userId, courseId, mentorId } = req.params;
+  const { userId, courseId } = req.params;
 
   // Convert the string IDs to numbers in one line
-  const [userIdNum, courseIdNum, mentorIdNum] = [
-    userId,
-    courseId,
-    mentorId,
-  ].map(Number);
+  const [userIdNum, courseIdNum] = [userId, courseId].map(Number);
 
   // Validate IDs
-  if (isNaN(userIdNum) || isNaN(courseIdNum) || isNaN(mentorIdNum)) {
-    return res
-      .status(400)
-      .json({ error: "Invalid user id, course id, or mentor id" });
+  if (isNaN(userIdNum) || isNaN(courseIdNum)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid user id, course id, or mentor id",
+    });
   }
 
   try {
@@ -306,15 +364,19 @@ export const deleteUserCourse = async (req: Request, res: Response) => {
       .where(
         and(
           eq(UserCourses.userId, userIdNum),
-          eq(UserCourses.courseId, courseIdNum),
-          eq(UserCourses.mentorId, mentorIdNum)
+          eq(UserCourses.courseId, courseIdNum)
         )
       );
 
     // If the user course does not exist, return a 404 response
     if (existingUserCourse.length === 0) {
-      return res.status(404).json({ message: "User course not found" });
+      return res.status(404).json({
+        success: false,
+        message: "User course not found",
+      });
     }
+
+    const mentorIdNum = Number(existingUserCourse[0].mentorId);
 
     // Proceed to delete the user course
     await db
@@ -328,13 +390,14 @@ export const deleteUserCourse = async (req: Request, res: Response) => {
       );
 
     return res.status(200).json({
+      success: true,
+      data: {},
       message: `User course deleted successfully`,
     });
   } catch (error) {
-    console.error("Error deleting user course", error);
     return res.status(500).json({
+      success: false,
       message: "Error deleting user course",
-      error,
     });
   }
 };

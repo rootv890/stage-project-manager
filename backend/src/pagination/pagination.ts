@@ -1,6 +1,13 @@
-// For Courses (UserCourses)
-
-import { asc, count, countDistinct, desc, eq, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  countDistinct,
+  desc,
+  eq,
+  InferSelectModel,
+  sql,
+} from "drizzle-orm";
 import db from "../db/db";
 import { Courses, UserCourses } from "../db/schema";
 import { CourseType, PaginatedResponse, UserCourseType } from "../types/types";
@@ -9,29 +16,49 @@ import { CourseType, PaginatedResponse, UserCourseType } from "../types/types";
 interface PaginatedParams {
   page: number;
   limit: number;
-  orderBy: keyof CourseType;
+  orderBy: keyof InferSelectModel<typeof Courses>;
   order: "asc" | "desc";
+  status?: Partial<CourseType["status"]>;
+  mentorId?: number;
 }
 
-export const getPaginatedCourses = async (
-  page: number = 1,
-  limit: number = 10,
-  orderBy: keyof CourseType = "id",
-  order: "asc" | "desc" = "desc"
-): Promise<PaginatedResponse<typeof Courses.$inferSelect>> => {
+export const getPaginatedCourses = async ({
+  page = 1,
+  limit = 10,
+  orderBy = "id",
+  order = "desc",
+  status,
+  mentorId,
+}: PaginatedParams): Promise<
+  PaginatedResponse<typeof Courses.$inferSelect>
+> => {
   // Ensure page and  size
   const validPage = Math.max(1, page);
   const validLimit = Math.max(1, Math.min(100, limit)); //   setting max limit to 100
 
   const offset = (validPage - 1) * limit;
 
+  // Dynamic Filtering
+  const filteringConditions = [];
+  if (status) {
+    filteringConditions.push(eq(Courses.status, status));
+  }
+  if (status) {
+    filteringConditions.push(eq(Courses.status, status));
+  }
+  if (mentorId) {
+    filteringConditions.push(eq(Courses.mentorId, mentorId));
+  }
   //   toal count of courses
   const [totalCount] = await db
     .select({
       //   count: count(Courses.id),
       count: sql`COUNT(*)`.mapWith(Number),
     })
-    .from(Courses);
+    .from(Courses)
+    .where(
+      filteringConditions.length > 0 ? and(...filteringConditions) : sql`1 = 1`
+    );
 
   const totalItems = Number(totalCount.count);
   const totalPages = Math.ceil(totalItems / validLimit);
@@ -44,6 +71,9 @@ export const getPaginatedCourses = async (
     .from(Courses)
     // .orderBy(sql`${Courses[orderBy]} ${order}`);
     .orderBy(order === "desc" ? desc(Courses[orderBy]) : asc(Courses[orderBy]))
+    .where(
+      filteringConditions.length > 0 ? and(...filteringConditions) : sql`1 = 1`
+    )
     .limit(limit)
     .offset(offset);
 
@@ -61,98 +91,10 @@ export const getPaginatedCourses = async (
   };
 };
 
-export const getPaginatedAllUserCourses = async (
-  page: number = 1,
-  limit: number = 10,
-  orderBy: keyof UserCourseType = "id",
-  order: "asc" | "desc" = "desc"
-): Promise<PaginatedResponse<typeof UserCourses.$inferInsert>> => {
-  // Ensure page and  limit
-
-  const validPage = Math.max(1, page);
-  const validLimit = Math.max(1, Math.min(100, limit));
-  const offset = (validPage - 1) * limit;
-
-  // total count of courses
-  const [totalCount] = await db
-    .select({
-      count: countDistinct(UserCourses.id),
-    })
-    .from(UserCourses);
-
-  const totalItems = Number(totalCount.count);
-
-  const totalPages = Number(Math.ceil(totalItems / validLimit));
-
-  // Get courses
-  // orderBy: [asc(posts.id)],
-
-  const userCourses: UserCourseType[] = await db
-    .select()
-    .from(UserCourses)
-    .orderBy(
-      order === "desc" ? desc(UserCourses[orderBy]) : asc(UserCourses[orderBy])
-    )
-    .limit(limit)
-    .offset(offset);
-
-  // Returns the first n rows
-  return {
-    data: userCourses,
-    metadata: {
-      currentPage: validPage,
-      totalPages: totalPages,
-      totalItems: totalItems,
-      hasNextPage: validPage < totalPages,
-      hasPrevPage: validPage > 1,
-      limit,
-    },
-  };
-};
-
-export const getPaginatedUserCoursesById = async (
-  userId: number,
-  page: number = 1,
-  limit: number = 10,
-  orderBy: keyof UserCourseType = "id",
-  order: "asc" | "desc" = "desc"
-) => {
-  const validPage = Math.max(1, page);
-  const validLimit = Math.max(1, Math.min(100, limit));
-  const offset = (validPage - 1) * limit;
-
-  const [totalCount] = await db
-    .select({
-      count: count(UserCourses.id),
-    })
-    .from(UserCourses)
-    .where(eq(UserCourses.userId, userId));
-
-  const totalItems = Number(totalCount.count);
-  const totalPages = Number(Math.ceil(totalItems / validLimit));
-
-  const userCourses = await db
-    .select()
-    .from(UserCourses)
-    .where(eq(UserCourses.userId, userId))
-    .orderBy(
-      order === "desc" ? desc(UserCourses[orderBy]) : asc(UserCourses[orderBy])
-    )
-    .limit(limit)
-    .offset(offset);
-
-  return {
-    data: userCourses,
-    metadata: {
-      currentPage: validPage,
-      totalPages: totalPages,
-      totalItems: totalItems,
-      hasNextPage: validPage < totalPages,
-      hasPrevPage: validPage > 1,
-      limit,
-    },
-  };
-};
+// page: number = 1,
+// limit: number = 10,
+// orderBy: keyof UserCourseType = "id",
+// order: "asc" | "desc" = "desc"
 
 export const getPaginatedCoursesByMentor = async (
   mentorId: number,

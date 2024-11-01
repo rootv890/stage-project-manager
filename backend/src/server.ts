@@ -10,6 +10,7 @@ import courseRouter from "./routes/courseRoutes";
 import mentorRouter from "./routes/mentorRoutes";
 import userCourseRouter from "./routes/userCourseRoutes";
 import mentorCourseRouter from "./routes/mentorCourseRoutes";
+import { errorHandler } from "./middlewares/errorHandler";
 
 const config = {
   port: process.env.PORT || 3000,
@@ -31,12 +32,16 @@ app.use("/api/test", (req, res) => {
 app.use("/api/users", userRouter);
 app.use("/api/courses", courseRouter);
 app.use("/api/mentors", mentorRouter);
-app.use("/api/usercourses", userCourseRouter);
-app.use("/api/mentorcourses", mentorCourseRouter);
+
+app.use("/api/user-courses", userCourseRouter);
+app.use("/api/mentor-courses", mentorCourseRouter);
 
 app.get("/", (req, res) => {
   res.send("Stage : The Course Manager Home");
 });
+
+// Error handler
+app.use(errorHandler);
 
 app.listen(config.port, () => {
   console.log(`Server running on http://${config.host}:${config.port}`);

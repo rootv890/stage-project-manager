@@ -1,5 +1,4 @@
 import express from "express";
-
 import {
   createNewUser,
   deleteUser,
@@ -11,48 +10,65 @@ import {
 
 const router = express.Router();
 
-// Get all users
-router.get("/", async (req, res) => {
-  await getAllUsers(req, res);
+router.get("/name/:username", async (req, res, next) => {
+  try {
+    await getUserByUsername(req, res, next);
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.get("/:id", async (req, res) => {
-  await getUserById(req, res);
+router.get("/:id", async (req, res, next) => {
+  try {
+    await getUserById(req, res, next);
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.get("/name/:username", async (req, res) => {
-  await getUserByUsername(req, res);
+router.get("/", async (req, res, next) => {
+  try {
+    await getAllUsers(req, res, next);
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.post("/addNew", async (req, res) => {
-  await createNewUser(req, res);
+router.post("/create", async (req, res, next) => {
+  try {
+    await createNewUser(req, res, next);
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.put("/update/:id", async (req, res) => {
-  await updateUser(req, res);
+router.put("/update/:id", async (req, res, next) => {
+  try {
+    await updateUser(req, res, next);
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.delete("/delete/:id", async (req, res) => {
-  await deleteUser(req, res);
+router.delete("/delete/:id", async (req, res, next) => {
+  try {
+    await deleteUser(req, res, next);
+  } catch (error) {
+    next(error);
+  }
 });
-
-export default router;
 
 /**
- * Dev Notes
+ * Routes Documentation
  *
- * Possible Routes :
- * 1. PUT /user/:id
- *  Update firstName, image_url, last_name
- * DONT TOUCH email and clerkUserID
- * 2. DELETE /user/:id
- *    Handle this clerk's account logout and deletion
+ * Base path: /api/users
  *
- * 3. GEt /user/:id
- *
- * 4. GET /user/me
- *  return profile info of the logged0in user based on clerkUserId - easy to fetch without needing a userId param
- *
- *
- *
+ * GET    /name/:username - Get user by username
+ * GET    /:id           - Get user by ID
+ * GET    /              - Get all users
+ * POST   /create        - Create new user
+ * PUT    /update/:id    - Update user by ID
+ * DELETE /delete/:id    - Delete user by ID
  */
+
+export default router;

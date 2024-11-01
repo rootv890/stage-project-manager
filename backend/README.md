@@ -19,7 +19,6 @@ Add filtering options based on fields such as course status or mentor ID, and im
 Consistent Response Format:
 Use a uniform structure for all responses. Example format:
 json
-Copy code
 {
 "success": true,
 "data": {...},
@@ -27,6 +26,8 @@ Copy code
 }
 HTTP Status Codes:
 Include appropriate HTTP status codes (200 for success, 400 for client errors, 500 for server errors) to improve error handling on the frontend.
+
+# DONE Global
 
 ## Error Handling and Logging
 
@@ -66,3 +67,7 @@ Production Configuration:
 Configure the server for production mode and create any deployment files needed.
 Staging Environment Testing:
 Test deployment in a staging environment to identify any issues before going live.
+
+<!-- TODO -->
+
+Error Handler for mentorCourse, Courses roues and controllers

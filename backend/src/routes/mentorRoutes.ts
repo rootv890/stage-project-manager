@@ -4,24 +4,60 @@ import {
   deleteMentor,
   getAllMentors,
   getMentorById,
+  updateMentor,
 } from "../controllers/mentorControllers";
+
+// base route = /mentors
 
 const router = Router();
 
-router.get("/", async (req, res) => {
-  await getAllMentors(req, res);
+router.get("/", async (req, res, next) => {
+  try {
+    await getAllMentors(req, res, next);
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.post("/add", async (req, res) => {
-  await createMentor(req, res);
+router.post("/add", async (req, res, next) => {
+  try {
+    await createMentor(req, res, next);
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.get("/:id", async (req, res) => {
-  await getMentorById(req, res);
+router.put("/update/:id", async (req, res, next) => {
+  try {
+    await updateMentor(req, res, next);
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.delete("/:id", async (req, res) => {
-  await deleteMentor(req, res);
+router.get("/:id", async (req, res, next) => {
+  try {
+    await getMentorById(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/:id", async (req, res, next) => {
+  try {
+    await deleteMentor(req, res, next);
+  } catch (error) {
+    next(error);
+  }
 });
 
 export default router;
+
+/**
+ * Routes Check
+ * GET '/' - OK
+ * GET '/add' - OK
+ * GET '/:id' - OK
+ * PUT '/update/:id' - OK
+ *
+ */

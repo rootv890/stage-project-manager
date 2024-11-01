@@ -3,12 +3,29 @@ import db from "../db/db";
 import { Courses } from "../db/schema";
 import { eq, InferInsertModel } from "drizzle-orm";
 
+export const getAllCourseByMentor = async (req: Request, res: Response) => {
+  try {
+    const courses = await db.select().from(Courses);
+    return res.status(200).json({
+      success: true,
+      message: "Courses found",
+      data: courses,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching courses",
+    });
+  }
+};
+
 export const createCourseForMentor = async (req: Request, res: Response) => {
   const data: Partial<InferInsertModel<typeof Courses>> = req.body;
 
   if (!data.mentorId || !data.title || !data.websiteLink) {
     return res.status(400).json({
-      message: "Please provide mentorId, title and websiteLink",
+      success: false,
+      message: "Invalid mentorId, title or/and websiteLink",
     });
   }
 
@@ -20,11 +37,12 @@ export const createCourseForMentor = async (req: Request, res: Response) => {
 
     if (courseExists.length > 0) {
       return res.status(400).json({
+        success: false,
         message: "Course already exists",
       });
     }
 
-    const newCourse = await db
+    const [newCourse] = await db
       .insert(Courses)
       .values({
         ...data,
@@ -34,13 +52,14 @@ export const createCourseForMentor = async (req: Request, res: Response) => {
       .returning();
 
     return res.status(201).json({
+      sucess: true,
       message: "Course created",
       data: newCourse,
     });
   } catch (error) {
     return res.status(500).json({
+      success: false,
       message: "Error creating course",
-      error: error,
     });
   }
 };
@@ -48,20 +67,17 @@ export const createCourseForMentor = async (req: Request, res: Response) => {
 export const getCoursesByMentor = async (req: Request, res: Response) => {
   const mentorId = req.params.mentorId;
 
-  console.log("Mentor ID:", mentorId);
-
   const mentorIdNumber = Number(mentorId);
 
   if (isNaN(mentorIdNumber)) {
     res.status(400).json({
+      success: false,
       message: "Invalid mentor ID",
     });
     return;
   }
 
   try {
-    // Transaction
-
     const courses = await db
       .select()
       .from(Courses)
@@ -69,29 +85,36 @@ export const getCoursesByMentor = async (req: Request, res: Response) => {
 
     if (courses.length === 0) {
       res.status(404).json({
+        success: false,
         message: "No courses found for this mentor",
       });
     }
     return res.status(200).json({
+      sucess: true,
       message: "Courses found",
-      count: courses.length,
       data: courses,
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: "Error fetching courses",
-      error: error,
     });
   }
 };
 
 export const updateCourse = async (req: Request, res: Response) => {
+  /**
+   * Purpose of this route
+   * To update a course by ID
+   */
+
   const { courseId } = req.params;
 
   const courseIdNum = Number(courseId);
 
   if (isNaN(courseIdNum)) {
     res.status(400).json({
+      success: false,
       message: "Invalid course ID",
     });
     return;
@@ -102,7 +125,8 @@ export const updateCourse = async (req: Request, res: Response) => {
 
   if (Object.keys(data).some((key) => restrictedFields.includes(key))) {
     return res.status(400).json({
-      message: "You cannot update id or createdAt fields",
+      success: false,
+      message: "You cannot update coures's id or createdAt fields",
     });
   }
 
@@ -114,6 +138,7 @@ export const updateCourse = async (req: Request, res: Response) => {
 
     if (courseExists.length === 0) {
       return res.status(404).json({
+        success: false,
         message: "Course not found",
       });
     }
@@ -128,13 +153,14 @@ export const updateCourse = async (req: Request, res: Response) => {
       .returning();
 
     return res.status(200).json({
+      sucess: true,
       message: "Course updated",
       data: updatedCourse,
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: "Error updating course",
-      error: error,
     });
   }
 };
@@ -146,6 +172,7 @@ export const deleteCourse = async (req: Request, res: Response) => {
   // Validate course ID
   if (isNaN(courseIdNum)) {
     return res.status(400).json({
+      success: false,
       message: "Invalid course ID",
     });
   }
@@ -159,6 +186,7 @@ export const deleteCourse = async (req: Request, res: Response) => {
 
     if (courseExists.length === 0) {
       return res.status(404).json({
+        success: false,
         message: "Course not found",
       });
     }
@@ -167,12 +195,14 @@ export const deleteCourse = async (req: Request, res: Response) => {
     await db.delete(Courses).where(eq(Courses.id, courseIdNum));
 
     return res.status(200).json({
+      sucess: true,
+      data: {},
       message: "Course deleted",
     });
   } catch (error) {
     return res.status(500).json({
+      success: false,
       message: "Error deleting course",
-      error: error,
     });
   }
 };
