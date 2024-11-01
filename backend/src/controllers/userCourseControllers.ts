@@ -2,71 +2,77 @@ import { Request, Response } from "express";
 import db from "../db/db";
 import { Courses, UserCourses } from "../db/schema";
 import { and, eq, InferSelectModel } from "drizzle-orm";
+import {
+  getPaginatedAllUserCourses,
+  getPaginatedUserCoursesById,
+} from "../pagination/pagination";
 
-export const getUserCourses = async (req: Request, res: Response) => {
+export const getAllUserCourses = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.pageSize) || 10;
+  const orderBy = req.query.orderBy || "id";
+  const order = req.query.order || "desc";
+
+  try {
+    const courses = await db.select().from(UserCourses);
+    const paginatedCourse = await getPaginatedAllUserCourses(
+      page,
+      limit,
+      orderBy as keyof InferSelectModel<typeof UserCourses>,
+      order as "asc" | "desc"
+    );
+
+    return res.status(200).json({
+      status: "success",
+      data: paginatedCourse,
+      message: "Courses fetched successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({ error: "Error getting user-courses" });
+  }
+};
+
+export const getAllUserCoursesById = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const { userId } = req.params;
-
-  // userid is a string, convert it to a number (userId)
-  console.log("userid", userId);
-
   const userIdNum = Number(userId);
 
   if (isNaN(userIdNum)) {
-    return res.status(400).send("Invalid user id");
+    return res.status(400).json({ error: "Invalid user id" });
   }
 
-  const { status, progress }: Partial<InferSelectModel<typeof UserCourses>> =
-    req.body;
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const orderBy = req.query.orderBy || "id";
+  const order = req.query.order || "desc";
+
+  console.log(req.query);
+
+  const getUserCourse = getPaginatedUserCoursesById(
+    userIdNum,
+    page,
+    limit,
+    orderBy as keyof InferSelectModel<typeof UserCourses>,
+    order as "asc" | "desc"
+  );
 
   try {
-    const userCourse = await db
-      .select({
-        courseId: UserCourses.courseId,
-        mentorId: UserCourses.mentorId,
-        status: UserCourses.status,
-        progress: UserCourses.progress,
-        courseTitle: Courses.title,
-        courseDescription: Courses.description,
-        websiteLink: Courses.websiteLink,
-        imageUrl: Courses.imageUrl,
-        duration: Courses.duration,
-        courseStatus: Courses.status,
-        courseProgress: Courses.progress,
-      })
-      .from(UserCourses)
-      .innerJoin(Courses, eq(UserCourses.courseId, Courses.id))
-      .where(eq(UserCourses.userId, userIdNum));
-
-    if (userCourse.length === 0) {
-      return res.status(404).json({
-        message: `No courses found for user ${userIdNum}`,
-        data: [],
-      });
-    }
-
-    // Check for changes before updating the user course
-    const currentStatus = userCourse[0].status;
-    const currentProgress = userCourse[0].progress;
-
-    const newStatus = status || currentStatus;
-    const newProgress = progress || currentProgress;
-
-    if (newStatus === currentStatus && newProgress === currentProgress) {
-      return res.status(200).json({
-        message: "No changes made to the user course",
-      });
-    }
+    const userCourses = await getUserCourse;
 
     return res.status(200).json({
-      message: `Courses for user ${userIdNum} retrieved successfully`,
-      data: userCourse,
+      status: "success",
+      data: userCourses,
+      message: "User courses fetched successfully",
     });
   } catch (error) {
-    console.error("Error fetching courses for user", error);
-    return res.status(500).json({
-      message: "Error fetching courses for user",
-      error,
-    });
+    console.error(error);
+    return res.status(400).json({ error: "Error getting user-courses" });
   }
 };
 

@@ -24,7 +24,6 @@ router.get("/:id", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
-  await console.log("Wokrng");
   deleteCourseById(req, res);
 });
 

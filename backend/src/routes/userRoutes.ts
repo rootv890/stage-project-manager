@@ -1,7 +1,7 @@
 import express from "express";
 
 import {
-  addNewUser,
+  createNewUser,
   deleteUser,
   getAllUsers,
   getUserById,
@@ -25,7 +25,7 @@ router.get("/name/:username", async (req, res) => {
 });
 
 router.post("/addNew", async (req, res) => {
-  await addNewUser(req, res);
+  await createNewUser(req, res);
 });
 
 router.put("/update/:id", async (req, res) => {

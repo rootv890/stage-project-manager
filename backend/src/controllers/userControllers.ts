@@ -8,8 +8,20 @@ import { Users } from "../db/schema";
 import { and, eq, InferInsertModel, InferSelectModel, or } from "drizzle-orm";
 import { usernamePatternChecker } from "../utils/utils";
 
-// Get all users
-export const getAllUsers = async (req: Request, res: Response) => {
+/**
+ * Fetches all users from the database.
+ *
+ * @function
+ * @async
+ * @param {Request} req - Express request object.
+ * @param {Response} res - Express response object.
+ * @returns {Promise<Response>} JSON response with an array of user data or an error message.
+ */
+
+export const getAllUsers = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   console.log("Fetching All Users");
   try {
     const users = await db.select().from(Users);
@@ -22,11 +34,22 @@ export const getAllUsers = async (req: Request, res: Response) => {
   }
 };
 
-// Add New Users
-
 type NewUserType = InferInsertModel<typeof Users>;
+/**
+ * Creates a new user in the database.
+ *
+ * @function
+ * @async
+ * @param {Request} req - Express request object containing user data in the body.
+ * @param {Response} res - Express response object.
+ * @returns {Promise<Response>} JSON response with success message or error details.
+ * @throws {Error} 400 - If required fields are missing or username/email is already taken.
+ */
 
-export const addNewUser = async (req: Request, res: Response) => {
+export const createNewUser = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   // Extract the user data from the request body
   const data: Record<string, any> = req.body;
 
@@ -112,6 +135,18 @@ export const addNewUser = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Updates an existing user in the database by ID.
+ *
+ * @function
+ * @async
+ * @param {Request} req - Express request object, containing `id` as a URL parameter and user data in the body.
+ * @param {Response} res - Express response object.
+ * @returns {Promise<Response>} JSON response with success message or error details.
+ * @throws {Error} 400 - If the user ID is missing or if restricted fields (email, clerkUserID) are included in the update.
+ * @throws {Error} 404 - If user is not found.
+ * @throws {Error} 500 - If there is an error updating the user.
+ */
 export const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -191,7 +226,22 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteUser = async (req: Request, res: Response) => {
+/**
+ * Deletes a user from the database by ID.
+ *
+ * @function
+ * @async
+ * @param {Request} req - Express request object with `id` as a URL parameter.
+ * @param {Response} res - Express response object.
+ * @returns {Promise<Response>} JSON response with success message or error details.
+ * @throws {Error} 400 - If the user ID is missing.
+ * @throws {Error} 404 - If user is not found.
+ * @throws {Error} 500 - If there is an error deleting the user.
+ */
+export const deleteUser = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   // based on id!
   const { id } = req.params;
   if (!id) {
@@ -215,7 +265,22 @@ export const deleteUser = async (req: Request, res: Response) => {
   }
 };
 
-export const getUserById = async (req: Request, res: Response) => {
+/**
+ * Fetches a user by their numeric ID.
+ *
+ * @function
+ * @async
+ * @param {Request} req - Express request object with `id` as a URL parameter.
+ * @param {Response} res - Express response object.
+ * @returns {Promise<Response>} JSON response with user data or error details.
+ * @throws {Error} 400 - If the user ID is missing.
+ * @throws {Error} 404 - If user is not found.
+ * @throws {Error} 500 - If there is an error retrieving the user.
+ */
+export const getUserById = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   console.log("Wokring");
   const { id } = req.params;
   if (!id) {
@@ -244,7 +309,21 @@ export const getUserById = async (req: Request, res: Response) => {
   }
 };
 
-export const getUserByUsername = async (req: Request, res: Response) => {
+/**
+ * Fetches a user by their username.
+ *
+ * @function
+ * @async
+ * @param {Request} req - Express request object with `username` as a URL parameter.
+ * @param {Response} res - Express response object.
+ * @returns {Promise<Response>} JSON response with user data or error details.
+ * @throws {Error} 400 - If the username is missing.
+ * @throws {Error} 500 - If there is an error retrieving the user.
+ */
+export const getUserByUsername = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const { username } = req.params;
 
   if (!username) {

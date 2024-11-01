@@ -2,16 +2,21 @@ import { Router } from "express";
 import {
   createUserCourse,
   deleteUserCourse,
+  getAllUserCourses,
+  getAllUserCoursesById,
   getUserCourse,
-  getUserCourses,
   updateUserCourse,
 } from "../controllers/userCourseControllers";
 import { deleteCourseById } from "../controllers/courseControllers";
 
 const router = Router();
 
+router.get("/", async (req, res) => {
+  await getAllUserCourses(req, res);
+});
+
 router.get("/:userId", async (req, res) => {
-  await getUserCourses(req, res);
+  await getAllUserCoursesById(req, res);
 });
 
 router.get("/:userId/:courseId/:mentorId", async (req, res) => {

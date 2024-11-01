@@ -28,6 +28,7 @@ async function seedToDb() {
       username: "gidda",
       createdAt: new Date(),
       updatedAt: new Date(),
+      roles: "ADMIN",
     },
 
     {
@@ -40,6 +41,7 @@ async function seedToDb() {
       firstName: "Pruthviraj",
       lastName: "Chauhan",
       username: "putta",
+      roles: "USER",
       createdAt: new Date(),
       updatedAt: new Date(),
     },
