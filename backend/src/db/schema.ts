@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 // Roles enum
-const rolesEnum = pgEnum("roles", ["ADMIN", "USER"]);
+// const rolesEnum = pgEnum("roles", ["ADMIN", "USER"]);
 
 // Users (From Clerk (frontend))
 export const Users = pgTable("users", {
@@ -20,7 +20,6 @@ export const Users = pgTable("users", {
   image_url: varchar("image_url"),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
-  roles: rolesEnum("roles").notNull().default("USER"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

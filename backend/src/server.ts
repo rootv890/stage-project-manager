@@ -1,10 +1,9 @@
 import "dotenv/config";
-import db from "./db/db";
 import cors from "cors";
 import bodyParser from "body-parser";
 import express from "express";
 import helmet from "helmet";
-import swaggerUi from "swagger-ui-express";
+import SwaggerUI from "swagger-ui-express";
 import { swaggerSpec } from "./swaggerConfig";
 import userRouter from "./routes/userRoutes";
 import courseRouter from "./routes/courseRoutes";
@@ -30,6 +29,13 @@ app.use("/api/test", (req, res) => {
   res.send("Stage : The Course Manager API");
 });
 
+app.use((req, res, next) => {
+  console.log("Request Method:", req.method);
+  console.log("Request Path:", req.path);
+  console.log("Request Body:", req.body);
+  next();
+});
+
 app.use("/api/users", userRouter);
 app.use("/api/courses", courseRouter);
 app.use("/api/mentors", mentorRouter);
@@ -41,11 +47,20 @@ app.get("/", (req, res) => {
   res.send("Stage : The Course Manager Home");
 });
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", SwaggerUI.serve, SwaggerUI.setup(swaggerSpec));
 
 // 404 handler
 app.use((req, res, next) => {
-  res.status(404).send("Sorry can't find that!");
+  console.error(
+    `Error 404: ${req.method} ${req.url} not found. Please check your URL`
+  );
+  res
+    .status(404)
+    .send(
+      process.env.NODE_ENV === "production"
+        ? "404: Page not found"
+        : `Error 404: ${req.method} ${req.url} not found. Please check your URL`
+    );
 });
 
 // Error handler

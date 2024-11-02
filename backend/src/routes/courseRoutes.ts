@@ -364,7 +364,7 @@ router.delete("/:id", async (req, res, next) => {
  *                   type: boolean
  *                   example: false
  *                 message:
- *                   type: string
+ *                   type: any
  *                   example: "Please provide a valid course ID" or "Please provide data to update"
  *       404:
  *         description: Course not found

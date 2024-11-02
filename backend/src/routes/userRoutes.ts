@@ -144,6 +144,9 @@ router.get("/", async (req, res, next) => {
  *               - username
  *               - email
  *               - password
+ *               - clerkUserID
+                 - firstName
+                 - lastName
  *     responses:
  *       201:
  *         description: User created successfully

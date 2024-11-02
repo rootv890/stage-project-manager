@@ -216,6 +216,16 @@ export const createUserCourse = async (
   }
 
   try {
+    // check userid and courseid exist
+    const [user, course] = await Promise.all([
+      db.select().from(UserCourses).where(eq(UserCourses.userId, userId)),
+      db.select().from(UserCourses).where(eq(UserCourses.courseId, courseId)),
+    ]);
+
+    if (user.length === 0 || course.length === 0) {
+      return next(new AppError("User or Course not found", 404));
+    }
+
     // check if the user-course relationship already exists
     const existingUserCourse = await db
       .select()

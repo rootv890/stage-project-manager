@@ -4,13 +4,16 @@ import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";
 
-const connection = process.env.DATABASE_URL!;
+export const connectionUrl =
+  process.env.NODE_ENV === "development"
+    ? process.env.DEV_DATABASE_URL
+    : process.env.DEV_DATABASE_URL;
 
-if (!connection) {
+if (!connectionUrl) {
   throw new Error("No DB url string found");
 }
 
-const sql = neon(connection);
+const sql = neon(connectionUrl);
 const db = drizzle(sql, { schema });
 
 export default db;

@@ -41,3 +41,9 @@ jspm_packages/
 # Operating system files
 .DS_Store
 Thumbs.db
+
+
+# Swagger JSONs
+swagger-api.json
+swagger.yaml
+src/utils/swaggerDocGen.ts
