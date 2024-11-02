@@ -27,14 +27,14 @@ json
 HTTP Status Codes:
 Include appropriate HTTP status codes (200 for success, 400 for client errors, 500 for server errors) to improve error handling on the frontend.
 
-# DONE Global
-
 ## Error Handling and Logging
 
 Global Error Handler:
 Set up a central error handler to manage different types of errors consistently.
 Logging:
 Use a logging library like winston or pino to log errors, warnings, and events for easier debugging and monitoring of app behavior.
+
+# DONE Global
 
 ## Documentation
 
@@ -70,4 +70,4 @@ Test deployment in a staging environment to identify any issues before going liv
 
 <!-- TODO -->
 
-Error Handler for mentorCourse, Courses roues and controllers
+Error Handler for

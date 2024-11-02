@@ -3,7 +3,7 @@ import db from "../db/db";
 import { Courses } from "../db/schema";
 import { eq, InferInsertModel } from "drizzle-orm";
 import { getPaginatedCourses } from "../pagination/pagination";
-import { CourseType } from "../types/types";
+import { CourseType, OrderByType, OrderType, StatusType } from "../types/types";
 import { AppError } from "../middlewares/errorHandler";
 
 type CourseInsertType = InferInsertModel<typeof Courses>;
@@ -30,17 +30,17 @@ export const getAllCourses = async (
     // queries for paginated courses
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
-    const orderBy = req.query.orderBy || ("id" as keyof CourseType);
-    const order = req.query.order || "desc";
+    const orderBy =
+      (req.query.orderBy as OrderByType) || ("id" as keyof CourseType);
+    const order = (req.query.order as OrderType) || ("desc" as OrderType);
     const mentorId = Number(req.query.mentorId);
-    const status = req.query.status as CourseType["status"];
+    const status = req.query.status as StatusType;
 
-    const courses = await db.select().from(Courses);
     const paginatedCourse = await getPaginatedCourses({
       page,
       limit,
-      orderBy: orderBy as keyof CourseType,
-      order: order as "asc" | "desc",
+      orderBy,
+      order,
       mentorId,
       status,
     });
@@ -82,10 +82,9 @@ export const createCourse = async (
   const data: CourseInsertType = req.body;
 
   if (!data.title || !data.websiteLink || !data.mentorId) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide a name, description and mentorId",
-    });
+    return next(
+      new AppError("Please provide a name, description and mentorId", 400)
+    );
   }
 
   try {
@@ -105,7 +104,7 @@ export const createCourse = async (
       mentorId: Courses.mentorId,
     });
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "Course added successfully",
       data: mentorId,
@@ -126,7 +125,7 @@ export const getCourseById = async (
   const courseIdNum = Number(courseId);
 
   if (!courseIdNum) {
-    return res.json({ message: "Invalid course id" });
+    return next(new AppError("Invalid course id", 400));
   }
 
   try {
@@ -140,7 +139,7 @@ export const getCourseById = async (
       return next(new AppError("Course not found", 404));
     }
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "Course found",
       data: course,

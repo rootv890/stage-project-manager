@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import db from "../db/db";
 import { Courses, UserCourses } from "../db/schema";
 import { and, eq, InferSelectModel } from "drizzle-orm";
@@ -6,6 +6,7 @@ import {
   getPaginatedAllUserCourses,
   PaginatedParams,
 } from "../pagination/userCoursePagination";
+import { AppError } from "../middlewares/errorHandler";
 
 /** JSDOC
  * @description Get all user courses
@@ -17,10 +18,53 @@ import {
  * @method GET
  * @example  /api/usercourses?orderBy=userId&order=asc&limit=25&page=1
  */
+
+/**
+ * @swagger
+ * /api/user-courses:
+ *   get:
+ *     summary: Get all user courses
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         description: Number of items per page
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: page
+ *         required: false
+ *         description: Page number
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: orderBy
+ *         required: false
+ *         description: Field to order by
+ *         schema:
+ *           type: string
+ *           default: "id"
+ *       - in: query
+ *         name: order
+ *         required: false
+ *         description: Order direction (asc or desc)
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: "desc"
+ *     responses:
+ *       200:
+ *         description: Successfully fetched user courses
+ *       404:
+ *         description: No user courses found
+ */
 export const getAllUserCourses = async (
   req: Request,
-  res: Response
-): Promise<Response> => {
+  res: Response,
+  next: NextFunction
+) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
   const orderBy = req.query.orderBy || "id";
@@ -35,10 +79,7 @@ export const getAllUserCourses = async (
     });
 
     if (paginatedCourse.data.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No courses found",
-      });
+      return next(new AppError("No user courses found", 404));
     }
 
     return res.status(200).json({
@@ -47,10 +88,7 @@ export const getAllUserCourses = async (
       message: "Courses fetched successfully",
     });
   } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: "Error getting user-courses",
-    });
+    next(error);
   }
 };
 
@@ -67,16 +105,14 @@ export const getAllUserCourses = async (
 
 export const getAllUserCoursesById = async (
   req: Request,
-  res: Response
-): Promise<Response> => {
+  res: Response,
+  next: NextFunction
+) => {
   const { userId } = req.params;
   const userIdNum = Number(userId);
 
   if (isNaN(userIdNum)) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid user id",
-    });
+    return next(new AppError("Invalid user id", 400));
   }
 
   const page = Number(req.query.page) || 1;
@@ -93,10 +129,7 @@ export const getAllUserCoursesById = async (
   });
 
   if (getUserCourse.data.length === 0) {
-    return res.status(404).json({
-      success: false,
-      message: "No user courses found",
-    });
+    return next(new AppError("No user courses found", 404));
   }
 
   try {
@@ -108,24 +141,22 @@ export const getAllUserCoursesById = async (
       message: "User courses fetched successfully",
     });
   } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: "Error getting user-courses",
-    });
+    return next(error);
   }
 };
 
-export const getUserCourseByUCids = async (req: Request, res: Response) => {
+export const getUserCourseByUCids = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { userId, courseId, mentorId } = req.params;
 
   const userIdNum = Number(userId);
   const courseIdNum = Number(courseId);
 
   if (isNaN(userIdNum) || isNaN(courseIdNum)) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid user id, course id, or mentor id",
-    });
+    return next(new AppError("Invalid user id or course id", 400));
   }
 
   try {
@@ -137,10 +168,7 @@ export const getUserCourseByUCids = async (req: Request, res: Response) => {
       .where(eq(Courses.id, courseIdNum));
 
     if (mentor === undefined) {
-      return res.status(404).json({
-        success: false,
-        message: "Mentor not found",
-      });
+      return next(new AppError("Course not found", 404));
     }
 
     const mentorIdNum = Number(mentor.id);
@@ -158,10 +186,7 @@ export const getUserCourseByUCids = async (req: Request, res: Response) => {
     const courses = userCourse;
 
     if (courses.data.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "User course not found",
-      });
+      return next(new AppError("User course not found", 404));
     }
 
     return res.status(200).json({
@@ -170,14 +195,15 @@ export const getUserCourseByUCids = async (req: Request, res: Response) => {
       data: courses.data[0],
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Error fetching user course",
-    });
+    return next(error);
   }
 };
 
-export const createUserCourse = async (req: Request, res: Response) => {
+export const createUserCourse = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const {
     userId,
     courseId,
@@ -186,7 +212,7 @@ export const createUserCourse = async (req: Request, res: Response) => {
   }: Partial<InferSelectModel<typeof UserCourses>> = req.body;
 
   if (!userId || !courseId) {
-    return res.status(400).send("userId, courseId  are required");
+    return next(new AppError("User ID and Course ID are required", 400));
   }
 
   try {
@@ -199,9 +225,7 @@ export const createUserCourse = async (req: Request, res: Response) => {
       );
 
     if (existingUserCourse.length > 0) {
-      return res.status(409).json({
-        message: "User course already exists",
-      });
+      return next(new AppError("User course already exists", 400));
     }
 
     // get mentorId from course
@@ -213,10 +237,7 @@ export const createUserCourse = async (req: Request, res: Response) => {
       .where(eq(Courses.id, courseId));
 
     if (!mentorId) {
-      return res.status(404).json({
-        success: false,
-        message: "Course not found",
-      });
+      return next(new AppError("Course not found", 404));
     }
 
     await db.insert(UserCourses).values({
@@ -238,23 +259,22 @@ export const createUserCourse = async (req: Request, res: Response) => {
       message: "User course created successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      message: "Error creating user course",
-    });
+    return next(error);
   }
 };
 
-export const updateUserCourse = async (req: Request, res: Response) => {
+export const updateUserCourse = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { userId, courseId } = req.params;
   const userIdNum = Number(userId);
   const courseIdNum = Number(courseId);
 
   // Validate IDs
   if (isNaN(userIdNum) || isNaN(courseIdNum)) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid user id or course id",
-    });
+    return next(new AppError("Invalid user id or course id", 400));
   }
 
   // Check if status or progress is provided
@@ -262,10 +282,9 @@ export const updateUserCourse = async (req: Request, res: Response) => {
     req.body;
 
   if (!status && !progress) {
-    return res.status(400).json({
-      success: false,
-      message: "Status or progress is required",
-    });
+    return next(
+      new AppError("Please provide status or progress to update", 400)
+    );
   }
 
   try {
@@ -281,10 +300,7 @@ export const updateUserCourse = async (req: Request, res: Response) => {
       );
 
     if (existingUserCourse.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "User course not found",
-      });
+      return next(new AppError("User course not found", 404));
     }
 
     const mentorIdNum = Number(existingUserCourse[0].mentorId);
@@ -300,10 +316,7 @@ export const updateUserCourse = async (req: Request, res: Response) => {
 
     // If no changes are detected, return a message
     if (newStatus === currentStatus && newProgress === currentProgress) {
-      return res.status(400).json({
-        success: false,
-        message: "No changes detected. Please provide new values.",
-      });
+      return next(new AppError("No changes detected", 400));
     }
 
     // Update the user course without transaction
@@ -335,14 +348,15 @@ export const updateUserCourse = async (req: Request, res: Response) => {
       message: "User course updated successfully",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Error updating user course",
-    });
+    return next(error);
   }
 };
 
-export const deleteUserCourse = async (req: Request, res: Response) => {
+export const deleteUserCourse = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { userId, courseId } = req.params;
 
   // Convert the string IDs to numbers in one line
@@ -350,10 +364,7 @@ export const deleteUserCourse = async (req: Request, res: Response) => {
 
   // Validate IDs
   if (isNaN(userIdNum) || isNaN(courseIdNum)) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid user id, course id, or mentor id",
-    });
+    return next(new AppError("Invalid user id or course id", 400));
   }
 
   try {
@@ -370,10 +381,7 @@ export const deleteUserCourse = async (req: Request, res: Response) => {
 
     // If the user course does not exist, return a 404 response
     if (existingUserCourse.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "User course not found",
-      });
+      return next(new AppError("User course not found", 404));
     }
 
     const mentorIdNum = Number(existingUserCourse[0].mentorId);

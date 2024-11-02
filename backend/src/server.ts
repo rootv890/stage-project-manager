@@ -4,7 +4,8 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import express from "express";
 import helmet from "helmet";
-
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./swaggerConfig";
 import userRouter from "./routes/userRoutes";
 import courseRouter from "./routes/courseRoutes";
 import mentorRouter from "./routes/mentorRoutes";
@@ -38,6 +39,13 @@ app.use("/api/mentor-courses", mentorCourseRouter);
 
 app.get("/", (req, res) => {
   res.send("Stage : The Course Manager Home");
+});
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// 404 handler
+app.use((req, res, next) => {
+  res.status(404).send("Sorry can't find that!");
 });
 
 // Error handler

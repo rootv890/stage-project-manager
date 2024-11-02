@@ -17,7 +17,7 @@ export const getAllUsers = async (
       return next(new AppError("Users not found", 404));
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
       data: users,
       message: "Users found successfully",
@@ -99,6 +99,7 @@ export const createNewUser = async (
       message: "User created successfully",
     });
   } catch (error) {
+    console.log("ERRO HERE");
     next(error);
   }
 };
@@ -166,7 +167,7 @@ export const updateUser = async (
       })
       .where(eq(Users.id, userId));
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: "User updated successfully",
     });
@@ -198,7 +199,7 @@ export const deleteUser = async (
 
     await db.delete(Users).where(eq(Users.id, userId));
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: "User deleted successfully",
     });
@@ -229,7 +230,7 @@ export const getUserById = async (
       return next(new AppError("User not found", 404));
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
       data: user,
       message: "User found successfully",
@@ -259,7 +260,7 @@ export const getUserByUsername = async (
       return next(new AppError("User not found", 404));
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
       data: user,
       message: "User found successfully",

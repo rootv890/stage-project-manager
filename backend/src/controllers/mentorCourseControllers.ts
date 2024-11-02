@@ -1,32 +1,62 @@
-import { ErrorRequestHandler, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import db from "../db/db";
 import { Courses } from "../db/schema";
 import { eq, InferInsertModel } from "drizzle-orm";
 
-export const getAllCourseByMentor = async (req: Request, res: Response) => {
-  try {
-    const courses = await db.select().from(Courses);
-    return res.status(200).json({
-      success: true,
-      message: "Courses found",
-      data: courses,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error fetching courses",
-    });
+import { AppError } from "../middlewares/errorHandler";
+import { getPaginatedCourses } from "../pagination/pagination";
+import { OrderByType, OrderType, StatusType } from "../types/types";
+
+export const getAllCourseByMentor = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response | void> => {
+  const page = req.query.page ? Number(req.query.page) : 1;
+  const limit = req.query.limit ? Number(req.query.limit) : 10;
+  const orderBy = (
+    req.query.orderBy ? String(req.query.orderBy) : "id"
+  ) as OrderByType;
+  const order = (
+    req.query.order ? String(req.query.order) : "desc"
+  ) as OrderType;
+
+  const { mentorId } = req.params;
+
+  const mentorIdNum = Number(mentorId);
+
+  if (isNaN(mentorIdNum)) {
+    return next(new AppError("Mentor ID is required", 400));
   }
+
+  const status = req.query.status as StatusType;
+
+  const paginatedCourse = await getPaginatedCourses({
+    page,
+    limit,
+    orderBy: "id",
+    order: "desc",
+    mentorId: Number(mentorIdNum),
+    status,
+  });
+  return res.status(200).json({
+    success: true,
+    data: paginatedCourse,
+    message: "Courses of mentor fetched successfully",
+  });
 };
 
-export const createCourseForMentor = async (req: Request, res: Response) => {
+export const createCourseForMentor = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const data: Partial<InferInsertModel<typeof Courses>> = req.body;
 
   if (!data.mentorId || !data.title || !data.websiteLink) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid mentorId, title or/and websiteLink",
-    });
+    return next(
+      new AppError("Invalid mentorId, title or/and websiteLink", 400)
+    );
   }
 
   try {
@@ -36,10 +66,7 @@ export const createCourseForMentor = async (req: Request, res: Response) => {
       .where(eq(Courses.title, data.title));
 
     if (courseExists.length > 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Course already exists",
-      });
+      return next(new AppError("Course already exists", 400));
     }
 
     const [newCourse] = await db
@@ -57,57 +84,15 @@ export const createCourseForMentor = async (req: Request, res: Response) => {
       data: newCourse,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Error creating course",
-    });
+    return next(error);
   }
 };
 
-export const getCoursesByMentor = async (req: Request, res: Response) => {
-  const mentorId = req.params.mentorId;
-
-  const mentorIdNumber = Number(mentorId);
-
-  if (isNaN(mentorIdNumber)) {
-    res.status(400).json({
-      success: false,
-      message: "Invalid mentor ID",
-    });
-    return;
-  }
-
-  try {
-    const courses = await db
-      .select()
-      .from(Courses)
-      .where(eq(Courses.mentorId, mentorIdNumber));
-
-    if (courses.length === 0) {
-      res.status(404).json({
-        success: false,
-        message: "No courses found for this mentor",
-      });
-    }
-    return res.status(200).json({
-      sucess: true,
-      message: "Courses found",
-      data: courses,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error fetching courses",
-    });
-  }
-};
-
-export const updateCourse = async (req: Request, res: Response) => {
-  /**
-   * Purpose of this route
-   * To update a course by ID
-   */
-
+export const updateCourse = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { courseId } = req.params;
 
   const courseIdNum = Number(courseId);
@@ -124,10 +109,9 @@ export const updateCourse = async (req: Request, res: Response) => {
   const restrictedFields = ["id", "createdAt"];
 
   if (Object.keys(data).some((key) => restrictedFields.includes(key))) {
-    return res.status(400).json({
-      success: false,
-      message: "You cannot update coures's id or createdAt fields",
-    });
+    return next(
+      new AppError("Cannot edit course id and CreatedAt fields", 400)
+    );
   }
 
   try {
@@ -137,10 +121,7 @@ export const updateCourse = async (req: Request, res: Response) => {
       .where(eq(Courses.id, courseIdNum));
 
     if (courseExists.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Course not found",
-      });
+      return next(new AppError("Course not found", 400));
     }
 
     const updatedCourse = await db
@@ -158,23 +139,21 @@ export const updateCourse = async (req: Request, res: Response) => {
       data: updatedCourse,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error updating course",
-    });
+    return next(error);
   }
 };
 
-export const deleteCourse = async (req: Request, res: Response) => {
+export const deleteCourse = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { courseId } = req.params;
   const courseIdNum = Number(courseId);
 
   // Validate course ID
   if (isNaN(courseIdNum)) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid course ID",
-    });
+    return next(new AppError("Invalid course ID", 400));
   }
 
   try {
@@ -185,10 +164,7 @@ export const deleteCourse = async (req: Request, res: Response) => {
       .where(eq(Courses.id, courseIdNum));
 
     if (courseExists.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Course not found",
-      });
+      return next(new AppError("Course not found", 400));
     }
 
     // Delete course
@@ -200,9 +176,6 @@ export const deleteCourse = async (req: Request, res: Response) => {
       message: "Course deleted",
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Error deleting course",
-    });
+    return next(error);
   }
 };

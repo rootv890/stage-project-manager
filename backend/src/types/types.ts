@@ -17,3 +17,18 @@ export type PaginatedResponse<T> = {
     hasPrevPage: boolean;
   };
 };
+
+export type StatusType =
+  | "PENDING"
+  | "IN_PROGRESS"
+  | "COMPLETED"
+  | "FAILED"
+  | "ARCHIVED"
+  | "FUTURE"
+  | "OUTDATED"
+  | "ON_HOLD"
+  | "CANCELLED";
+
+export type OrderByType = keyof CourseType;
+
+export type OrderType = "desc" | "asc";

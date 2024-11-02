@@ -21,7 +21,7 @@ export const getAllMentors = async (
 ) => {
   try {
     const mentors = await db.select().from(Mentors);
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "Mentors fetched successfully",
       data: mentors,
@@ -134,7 +134,7 @@ export const updateMentor = async (
       .where(eq(Mentors.id, mentorId)) // Add where clause to target specific mentor
       .returning();
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "Mentor updated successfully",
       data: updatedMentor,
@@ -163,16 +163,20 @@ export const getMentorById = async (
   }
 
   try {
-    const mentor = await db
+    const [mentor] = await db
       .select()
       .from(Mentors)
       .where(eq(Mentors.id, mentorId));
 
-    if (!mentor.length) {
+    if (Object.keys(mentor).length === 0) {
       return next(new AppError("Mentor not found", 404));
     }
 
-    return res.json(mentor[0]);
+    return res.status(200).json({
+      success: true,
+      data: mentor,
+      message: "Mentor found!",
+    });
   } catch (error) {
     return next(error);
   }
@@ -208,7 +212,11 @@ export const deleteMentor = async (
 
     // Delete the mentor
     await db.delete(Mentors).where(eq(Mentors.id, mentorId));
-    return res.json({ message: "Mentor deleted successfully" });
+    return res.status(200).json({
+      sucess: true,
+      message: "Mentor deleted successfully",
+      data: {},
+    });
   } catch (error) {
     return next(error);
   }
