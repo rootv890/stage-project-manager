@@ -1,19 +1,17 @@
 import { useClerk, useUser } from "@clerk/clerk-react";
 import { RiLoader5Line } from "react-icons/ri";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
+
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
 } from "./ui/dropdown-menu";
-import Divider from "./divider";
-import { Separator } from "./ui/separator";
-import { dark } from "@clerk/themes";
-type Props = {};
 
-function UserButton({}: Props) {
+import { Separator } from "./ui/separator";
+
+function UserButton() {
   const { isLoaded, isSignedIn, user } = useUser();
   const { signOut, openUserProfile } = useClerk();
   if (!isLoaded) {
@@ -28,7 +26,13 @@ function UserButton({}: Props) {
     return null;
   }
 
-  const { username, imageUrl, firstName, lastName } = user;
+  const {
+    username,
+    imageUrl,
+    firstName,
+    lastName,
+    primaryEmailAddress: email,
+  } = user;
 
   if (!firstName || !lastName) {
     return null;
@@ -46,7 +50,16 @@ function UserButton({}: Props) {
         </Avatar>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="mt-4 rounded-md">
+      <DropdownMenuContent
+        align="end"
+        className="mt-4 rounded-sm border-[0.3px] border-foreground/20 shadow-lg bg-background/90 gap-2 flex flex-col"
+      >
+        <DropdownMenuItem className="text-base text-muted-foreground flex  select-none hover:bg-none items-start  flex-col focus:bg-none">
+          <p className="text-white">{username}</p>
+          <p>{email?.emailAddress}</p>
+        </DropdownMenuItem>
+        <Separator />
+
         <DropdownMenuItem
           onClick={() => {
             openUserProfile();

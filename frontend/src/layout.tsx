@@ -23,7 +23,7 @@ const RootLayout = () => {
       <ThemeProvider defaultTheme="dark" storageKey="stage-ui-theme">
         <TopHeader />
         <div className="mt-[56px]">
-          <Outlet />
+          <Outlet /> {/* Like Children */}
         </div>
       </ThemeProvider>
     </ClerkProvider>

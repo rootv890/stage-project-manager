@@ -86,7 +86,7 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-slate-100 focus:text-secondary-foreground dark:focus:bg-secondary dark:focus:text-slate-50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:w-4 [&>svg]:h-4 [&>svg]:shrink-0",
+      "relative flex cursor-pointer select-none items-center gap-2 rounded-[2px] px-2 py-1.5 text-sm outline-none transition-colors focus:bg-slate-100 focus:text-secondary-foreground dark:focus:bg-secondary dark:focus:text-slate-50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:w-4 [&>svg]:h-4 [&>svg]:shrink-0",
       inset && "pl-8",
       className
     )}

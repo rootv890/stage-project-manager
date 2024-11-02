@@ -14,7 +14,7 @@ function TopHeader() {
   }
 
   return (
-    <div className="max-w-screen-lg w-[calc(70%)] gap-6 rounded-full mx-auto fixed z-50 bg-background/80 border-[0.5px] border-foreground/20 shadow-lg backdrop-blur-3xl left-1/2 top-4 -translate-x-1/2 h-[56px] flex items-center  justify-between  px-6 transition-all ease-linear">
+    <div className="max-w-screen-lg w-[calc(70%)] gap-6 rounded-full mx-auto fixed z-50 bg-background/80 border-[0.5px] border-foreground/20 shadow-lg backdrop-blur-md backdrop-saturate-[1.4] left-1/2 top-4 -translate-x-1/2 h-[56px] flex items-center justify-between px-6 transition-all ease-linear ">
       <div className="mr-6">
         <Logo />
       </div>
@@ -59,7 +59,7 @@ function TopHeader() {
           </div>
         )}
         {isSignedIn && (
-          <div className="ml-3 flex gap-1">
+          <div className="ml-3 w-full h-full flex gap-1  rounded-full">
             <UserButton />
           </div>
         )}
