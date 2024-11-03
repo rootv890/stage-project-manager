@@ -5,12 +5,6 @@ import { useEffect } from "react";
 function Onboarding({}: Props) {
   //   const { isLoaded, isSignedIn } = useAuth();
 
-  useEffect(() => {
-    // setTimeout(() => {
-    //   window.location.replace("/");
-    // }, 2000);
-  }, []);
-
   return (
     <div>
       <div className="text-center h-screen flex flex-col items-center justify-center">

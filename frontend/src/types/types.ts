@@ -10,9 +10,9 @@ export type StatusType =
   | "CANCELLED";
 
 export type OrderType = "desc" | "asc";
-export type OrderBy = keyof Courses;
+export type OrderByType = keyof CoursesType;
 
-export type Courses = {
+export type CoursesType = {
   id: number;
   mentorId: number;
   title: string;
@@ -26,7 +26,7 @@ export type Courses = {
   updatedAt?: Date;
 };
 
-export type Users = {
+export type UsersType = {
   id: number;
   clerkUserID: string;
   username: string;
@@ -38,7 +38,7 @@ export type Users = {
   updatedAt?: Date;
 };
 
-export type Mentors = {
+export type MentorsType = {
   id: number;
   name: string;
   imageUrl?: string;
@@ -51,7 +51,7 @@ export type Mentors = {
   updatedAt?: Date;
 };
 
-export type UserCourse = {
+export type UserCourseType = {
   id: number;
   userId: number;
   courseId: number;
@@ -61,3 +61,25 @@ export type UserCourse = {
   createdAt?: Date;
   updatedAt?: Date;
 };
+
+export type ResponseType = {
+  data: any;
+  success: boolean;
+  message: string;
+};
+
+// Type for the metadata object
+export interface PaginationMetadata {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  limit: number;
+}
+
+// Main response type for user courses data
+export interface UserCoursesResponse {
+  data: UserCourseType[];
+  metadata: PaginationMetadata;
+}

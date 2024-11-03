@@ -11,8 +11,8 @@ type SignUpFormInputs = {
   password: string;
   confirmPassword: string;
   userName: string;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
 };
 
 const SignUp = () => {
@@ -23,17 +23,18 @@ const SignUp = () => {
     watch,
     setError,
   } = useForm<SignUpFormInputs>();
-  const [loading, setLoading] = useState(false);
-  const [code, setCode] = useState("");
-  const navigate = useNavigate();
 
-  const [verifying, setVerifying] = useState(false);
+  const [loading, setLoading] = useState(false); // Loading state
+  const [code, setCode] = useState(""); // Verification code
+  const navigate = useNavigate(); // to navigate to other pages
+
   const [pendingVerification, setPendingVerification] = useState(false);
+  const [verifying, setVerifying] = useState(false);
 
   const [signUpComplete, setSignUpComplete] = useState(false);
 
-  const { isSignedIn } = useAuth();
-  const { signUp, isLoaded } = useSignUp();
+  const { isSignedIn } = useAuth(); // Check if user is signed in
+  const { signUp, isLoaded } = useSignUp(); // for sign up
 
   if (isLoaded && isSignedIn) {
     console.log("User is already signed in");
@@ -54,15 +55,16 @@ const SignUp = () => {
         emailAddress: data.email,
         password: data.password,
         firstName: data.firstName,
-        lastName: data.lastName || undefined,
-        username: data.userName || undefined,
+        lastName: data.lastName,
+        username: data.userName,
       });
 
-      console.log("Sign Up Result:", result);
+      // console.log("Sign Up Result:", result);
 
       // Specifically handle the email verification
       if (result.status === "missing_requirements") {
         // Directly request email verification
+        console.log("MISSING REQUIREMENTS");
         const verificationResult =
           await signUp.prepareEmailAddressVerification();
         console.log("Verification preparation:", verificationResult);
@@ -70,7 +72,7 @@ const SignUp = () => {
       } else if (result.status === "complete") {
         console.log("Signup complete", result);
 
-        navigate("/");
+        // navigate("/");
       }
     } catch (err: any) {
       console.error("Sign Up Error:", err);

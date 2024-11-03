@@ -1,5 +1,12 @@
 import { useClerk, useUser } from "@clerk/clerk-react";
-import { RiLoader5Line } from "react-icons/ri";
+import {
+  RiContactsBook2Fill,
+  RiLoader5Line,
+  RiProfileFill,
+  RiSettings3Fill,
+} from "react-icons/ri";
+import { GoPersonFill, GoSignOut } from "react-icons/go";
+
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 import {
@@ -10,6 +17,7 @@ import {
 } from "./ui/dropdown-menu";
 
 import { Separator } from "./ui/separator";
+import { MdCall, MdSupport } from "react-icons/md";
 
 function UserButton() {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -55,7 +63,7 @@ function UserButton() {
         className="mt-4 rounded-sm border-[0.3px] border-foreground/20 shadow-lg bg-background/90 gap-2 flex flex-col"
       >
         <DropdownMenuItem className="text-base text-muted-foreground flex  select-none hover:bg-none items-start  flex-col focus:bg-none">
-          <p className="text-white">{username}</p>
+          <p className="dark:text-white text-black ">{username}</p>
           <p>{email?.emailAddress}</p>
         </DropdownMenuItem>
         <Separator />
@@ -65,16 +73,23 @@ function UserButton() {
             openUserProfile();
           }}
         >
-          Profile
+          <GoPersonFill /> Profile
         </DropdownMenuItem>
-        <DropdownMenuItem>Setting</DropdownMenuItem>
-        <DropdownMenuItem>Contact</DropdownMenuItem>
+        <DropdownMenuItem>
+          <RiSettings3Fill />
+          Setting
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <MdSupport />
+          Contact
+        </DropdownMenuItem>
         <Separator />
         <DropdownMenuItem
           onClick={() => {
             signOut();
           }}
         >
+          <GoSignOut />
           Sign Out
         </DropdownMenuItem>
       </DropdownMenuContent>

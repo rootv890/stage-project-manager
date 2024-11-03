@@ -12,8 +12,6 @@ import SignIn from "./pages/auth/sign-in.tsx";
 import RootLayout from "./layout.tsx";
 import SignUp from "./pages/auth/sign-up.tsx";
 import ResetPassword from "./pages/auth/reset-password.tsx";
-
-import Onboarding from "./pages/auth/on-boarding.tsx";
 import SSOCallback from "./pages/auth/sso-callback.tsx";
 import { CompleteSignUp } from "./pages/auth/complete-sign-up.tsx";
 

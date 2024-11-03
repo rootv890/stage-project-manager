@@ -74,7 +74,6 @@ function ResetPassword({}: Props) {
         navigate("/");
       } else {
         setError("Something went wrong");
-        console.log(result);
       }
     } catch (err) {
       console.error("Error resetting password:", err.errors[0].longMessage);
