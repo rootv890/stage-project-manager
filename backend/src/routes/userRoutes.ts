@@ -3,6 +3,7 @@ import {
   createNewUser,
   deleteUser,
   getAllUsers,
+  getUserByClerkId,
   getUserById,
   getUserByUsername,
   updateUser,
@@ -276,6 +277,20 @@ router.delete("/delete/:id", async (req, res, next) => {
  */
 
 export default router;
+
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: User management and retrieval
+ */
+router.get("/clerk/:clerkId", async (req, res, next) => {
+  try {
+    await getUserByClerkId(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+});
 
 /**
  * @swagger

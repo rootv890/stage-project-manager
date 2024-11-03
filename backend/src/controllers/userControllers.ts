@@ -269,3 +269,35 @@ export const getUserByUsername = async (
     next(error);
   }
 };
+
+export const getUserByClerkId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { clerkId } = req.params;
+
+    if (!clerkId) {
+      return next(new AppError("Clerk ID is required", 400));
+    }
+
+    const [user] = await db
+      .select()
+      .from(Users)
+      .where(eq(Users.clerkUserID, clerkId));
+
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
+
+    // return the id of the user
+    res.status(200).json({
+      success: true,
+      data: user.id,
+      message: "User found successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
