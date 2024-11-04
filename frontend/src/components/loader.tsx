@@ -1,10 +1,26 @@
+import { cn } from "@/lib/utils";
 import { RiLoader3Fill } from "react-icons/ri";
 
-const Loader = () => {
+const Loader = ({
+  className,
+  loadingText,
+}: {
+  className?: string;
+  loadingText?: string;
+}) => {
   return (
-    <div className="flex items-center justify-center h-screen w-full">
+    <div
+      className={cn(
+        "flex items-center justify-center h-screen w-full",
+        className
+      )}
+    >
       <RiLoader3Fill className="animate-spin text-2xl" />
-      Loading
+      {loadingText ? (
+        <span className="ml-2">{loadingText}</span>
+      ) : (
+        <span className="ml-2">Loading...</span>
+      )}
     </div>
   );
 };

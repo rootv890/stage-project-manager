@@ -22,7 +22,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 142.1 76.2% 36.3%;
+    --ring: 0.1 0.2% 100.3%;
     --radius: 1rem;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -50,7 +50,7 @@
     --destructive-foreground: 0 85.7% 97.3%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 142.4 71.8% 29.2%;
+    --ring: 0.1 0.2% 30.3%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -99,11 +99,46 @@
   border-image-slice: 1; /* Ensures that the gradient repeats along the border */
 }
 
+select:hover {
+  border-color: #888;
+}
+
+select {
+  background-image: url("./assets/right-caret.svg");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px;
+  padding-right: 30px;
+
+  padding-inline: 16px;
+  padding-block: 12px;
+  border-radius: 10px;
+  /* padding-right: 30px; */
+
+  color: white;
+  background-color: #18181b;
+
+  /* Add custom arrow */
+}
+
+/* remove outlines */
+select:focus {
+  outline: none;
+}
+
 @layer components {
   input {
-    @apply font-geist-mono text-foreground block  border-b w-full border-foreground/50  ring-0 active:ring-0 outline-none my-2 focus:border-b-primary focus:ring-ring bg-transparent focus:border-dashed
+    @apply font-geist-mono text-foreground block border rounded-[6px]  w-full border-muted-foreground/30  ring-0 active:ring-0 outline-none my-2 focus:border-b-primary focus:ring-ring bg-transparent focus:border-dashed
     placeholder:text-zinc-500 focus:placeholder:text-zinc-400 py-2 px-3
     !important;
+  }
+
+  option {
+    @apply flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-4  text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 py-6;
+  }
+
+  .input-label {
+    @apply flex flex-col gap-3 mt-6;
   }
 
   section div {

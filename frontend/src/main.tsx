@@ -14,6 +14,8 @@ import SignUp from "./pages/auth/sign-up.tsx";
 import ResetPassword from "./pages/auth/reset-password.tsx";
 import SSOCallback from "./pages/auth/sso-callback.tsx";
 import { CompleteSignUp } from "./pages/auth/complete-sign-up.tsx";
+import CreateLayout from "./pages/create/create.tsx";
+import CreateCourse from "./pages/create/components/createCourse.tsx";
 
 /**
  * React Router
@@ -31,6 +33,19 @@ const router = createBrowserRouter([
         path: "/contact",
         element: <Contact />,
       },
+
+      {
+        path: "/create",
+        // course, mentor,
+        element: <CreateLayout />,
+        children: [
+          {
+            path: "course",
+            element: <CreateCourse />,
+          },
+        ],
+      },
+
       {
         path: "/about",
         element: (
@@ -46,6 +61,7 @@ const router = createBrowserRouter([
           },
         ],
       },
+
       // Auth routes
       {
         path: "/sign-in",

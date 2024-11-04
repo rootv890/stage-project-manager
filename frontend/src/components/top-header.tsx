@@ -5,9 +5,11 @@ import Logo from "./logo";
 import { useNavigate } from "react-router-dom";
 import Loader from "./loader";
 import UserButton from "./user-button";
+import { useStageId } from "@/store/store";
 
 function TopHeader() {
   const { isSignedIn, isLoaded } = useAuth();
+  const { stageId } = useStageId();
   const navigate = useNavigate();
   if (!isLoaded) {
     return <Loader />;
@@ -28,7 +30,7 @@ function TopHeader() {
               navigate("/dashboard");
             }}
           >
-            Dashboard
+            {stageId}
           </Button>
         </div>
       )}

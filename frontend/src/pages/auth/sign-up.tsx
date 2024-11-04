@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import OAuthSection from "./oAuth";
+import Validation from "@/components/validation";
 
 type SignUpFormInputs = {
   email: string;
@@ -329,17 +330,3 @@ const SignUp = () => {
 };
 
 export default SignUp;
-
-function Validation({
-  error,
-}: {
-  error: {
-    message: any;
-  };
-}) {
-  return (
-    <p className="mt-1 text-sm p-3 rounded-md bg-destructive/30 text-destructive">
-      {error.message}
-    </p>
-  );
-}

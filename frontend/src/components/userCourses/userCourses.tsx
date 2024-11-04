@@ -1,6 +1,6 @@
 import { useEffect, useId, useState } from "react";
 import UserCourse from "./userCourse";
-import { fetchUserCoursesById } from "@/services/apiServices";
+import { devConsole, fetchUserCoursesById } from "@/services/apiServices";
 import { useQuery } from "@tanstack/react-query";
 import {
   OrderByType,
@@ -11,6 +11,9 @@ import {
 import { useStageId } from "@/store/store";
 import { Button } from "../ui/button";
 import { HiPlus } from "react-icons/hi2";
+import { MdWarning } from "react-icons/md";
+import AddCourseButton from "../courses/add-course-btn";
+import Loader from "../loader";
 
 // Display courses
 type Props = {};
@@ -21,29 +24,50 @@ function UserCourses({}: Props) {
   const [page, setPage] = useState(1);
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState<OrderByType>("id");
+  const [limit, setLimit] = useState(3);
 
   const { stageId } = useStageId();
 
   const { data, error, isLoading } = useQuery({
-    queryKey: ["userCourses", stageId, page, order, orderBy],
+    queryKey: ["userCourses", stageId, page, order, orderBy, limit],
     queryFn: async () => {
       try {
-        const response = await fetchUserCoursesById({
-          userId: stageId,
-          page,
-          order: order as "asc" | "desc", // matching your backend
-          orderBy,
-        });
+        // const response = await fetchUserCoursesById({
+        //   userId: stageId,
+        //   page,
+        //   order: order as "asc" | "desc", // matching your backend
+        //   orderBy,
+        // });
 
-        if (response.data.length === 0 || !response.data) {
-          console.log("No courses found for the user");
+        const response = await fetch(
+          `http://localhost:5050/api/user-courses/7?page=${page}&limit=${limit}&order=${order}&orderBy=${orderBy}`
+        );
+
+        console.log("Response", response);
+        let data;
+        if (response.ok) {
+          data = await response.json();
+          console.log("Data", data);
+          return data;
         }
 
-        if (!response.success) {
-          throw new Error(response.message);
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error("No courses found for the user");
+          }
+          throw new Error("HTTP error: " + response.status);
         }
 
-        return response.data;
+        // if (response.data.length === 0 || !response.data) {
+        //   console.log("No courses found for the user");
+        // }
+
+        // if (!response.success) {
+        //   console.log("TO query Error");
+        //   throw new Error(response.message);
+        // }
+
+        // return response;
       } catch (error) {
         console.error("Error fetching data", error);
         throw error;
@@ -54,6 +78,13 @@ function UserCourses({}: Props) {
     gcTime: 1000 * 60 * 60 * 2, // Garbage collect after 2 hours
   });
 
+  devConsole("UserCourses Component RAW DATA", data);
+
+  if (data?.success) {
+    console.log("Data Success");
+    console.log(data?.data?.data);
+  }
+
   useEffect(() => {
     if (data) {
       setCourses(data.data);
@@ -61,24 +92,17 @@ function UserCourses({}: Props) {
     }
   }, [data]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
 
-  if (error) {
-    return (
-      <div className="bg-red-500/50 border-red-600 border p-2 rounded-md">
-        <p>Error fetching courses:</p>
-        <p>{error.message || "An unexpected error occurred."}</p>
+  // if (error) {
+  //   if (error.message === "No courses found for the user") {
+  //     return (
 
-        <div>
-          <p>• Add Courses </p>
-        </div>
-      </div>
-    );
-  }
-
-  console.log("Courses", data);
+  //     );
+  //   }
+  // }
 
   return (
     <div>
@@ -95,6 +119,7 @@ function UserCourses({}: Props) {
 
       <div className="w-full my-4 flex items-center justify-start gap-4 ">
         <Button
+          disabled={isLoading}
           style={{
             paddingBlock: "1.4rem",
           }}
@@ -104,6 +129,7 @@ function UserCourses({}: Props) {
           <HiPlus className="group-hover:rotate-90" size={32} /> New Course
         </Button>
         <Button
+          disabled={isLoading}
           style={{
             paddingBlock: "1.4rem",
           }}
@@ -113,6 +139,29 @@ function UserCourses({}: Props) {
           <HiPlus className="group-hover:rotate-90" size={32} /> New Mentor
         </Button>
       </div>
+
+      {isLoading && (
+        // <div className="w-[100%] min-h-[56px] flex items-center justify-center rounded-md">
+        //   Your courses are loading...
+        // </div>
+        <Loader
+          className="h-[156px] bg-zinc-900  rounded-sm "
+          loadingText={"Your courses are loading..."}
+        />
+      )}
+
+      {error && error.message === "No courses found for the user" && (
+        <div className="shadow-md border border-muted-foreground-300 p-4 rounded-md flex flex-col gap-2 mt-6 items-center">
+          <div className="flex items-center text-red-500 mb-2">
+            <MdWarning size={24} />
+            <h2 className="text-lg font-semibold ml-2">
+              No courses found for the user
+            </h2>
+          </div>
+          <p className="text-muted-foreground"> Start adding new courses!</p>
+          <AddCourseButton />
+        </div>
+      )}
 
       {courses.map((course, index) => (
         <UserCourse course={course} key={index} />

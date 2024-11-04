@@ -47,7 +47,7 @@ const OAuthSection = ({ title, mode }: OAuthSectionProps) => {
       <Button
         onClick={() => handleOAuthSignIn("oauth_google")}
         variant="secondary"
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 py-6 rounded-md"
       >
         <FcGoogle className="h-5 w-5" />
         {mode === "sign-in" ? "Sign In" : "Sign Up"} with Google
@@ -56,16 +56,16 @@ const OAuthSection = ({ title, mode }: OAuthSectionProps) => {
       <Button
         onClick={() => handleOAuthSignIn("oauth_github")}
         variant="secondary"
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 py-6 rounded-md w-full "
       >
-        <IoLogoGithub className="h-5 w-5" />
+        <IoLogoGithub className="h-10 w-10" />
         {mode === "sign-in" ? "Sign In" : "Sign Up"} with GitHub
       </Button>
 
       <Button
         onClick={() => handleOAuthSignIn("oauth_apple")}
         variant="secondary"
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 py-6 rounded-md"
       >
         <FaApple className="h-5 w-5" />
         {mode === "sign-in" ? "Sign In" : "Sign Up"} with Apple

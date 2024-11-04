@@ -64,6 +64,7 @@ const handleError = (error: any) => {
 export const fetchStageIdByClerkId = async (clerkId: string) => {
   try {
     const response = await api.get(`/users/clerk/${clerkId}`);
+
     if (response.status === 200 && response.data.data) {
       return response.data.data;
     } else {
@@ -129,19 +130,23 @@ export const fetchUserCoursesById = async ({
   order?: OrderType;
   orderBy?: OrderByType;
 }) => {
-  try {
-    const response = await fetch(
-      `${API_URL}/user-courses/${userId}?page=${page}&limit=${limit}&order=${order}&orderBy=${orderBy}`
-    );
+  console.log("Stage ID:", userId);
 
-    const data = await response.json();
-    return data as ResponseType;
-  } catch (error) {
-    handleError(error);
-    throw new Error(
-      "Error fetching user courses. Please check the user ID and try again."
-    );
-  }
+  // try {
+  const response = await fetch(
+    `${API_URL}/user-courses/${userId}?page=${page}&limit=${limit}&order=${order}&orderBy=${orderBy}`
+  );
+  const data = await response.json();
+  devConsole("fetchUserCoursesById()", data);
+  return data as ResponseType;
+  // } catch (error) {
+  //   // devConsole("fetchUserCoursesById()", error);
+  //   // handleError(error);
+  //   // throw new Error(
+  //   //   "Error fetching user courses. Please check the user ID and try again."
+  //   // );
+
+  // }
 };
 
 // 4. Fetch mentor details by mentor ID
@@ -172,6 +177,7 @@ export const fetchCourseDetails = async (courseId: string) => {
     }
   } catch (error) {
     handleError(error);
+    devConsole("fetchCourseDetails()", error);
     throw new Error(
       "Error fetching course details. Please ensure the course ID is valid."
     );
@@ -199,3 +205,34 @@ export const fetchSpecificCourseByUser = async (
     );
   }
 };
+
+// 7. Fetch all Mentors
+export const fetchAllUserMentors = async (stageId: string) => {
+  try {
+    if (!stageId) {
+      throw new Error("Stage ID is required to fetch mentors.");
+    }
+    const response = await api.get(`/user-mentors/${stageId}`);
+    if (response.status === 200 && response.data) {
+      return response.data;
+    } else {
+      throw new Error("No mentors found.");
+    }
+  } catch (error) {
+    handleError(error);
+    throw new Error("Error fetching mentors. Please try again.");
+  }
+};
+
+// const test = async () => {
+//   const data = await fetchAllUserMentors(5);
+//   console.log(data);
+// };
+
+// test();
+
+export function devConsole(from: string, message: any) {
+  if (process.env.NODE_ENV === "development") {
+    console.log(from, message);
+  }
+}
