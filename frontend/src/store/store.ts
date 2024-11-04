@@ -1,17 +1,17 @@
-import { fetchUserIdByClerkId } from "@/services/apiServices";
+import { fetchStageIdByClerkId } from "@/services/apiServices";
 import { create } from "zustand";
 
 interface UserIdState {
-  userId: string;
-  fetchUserId: (userId: string) => void;
+  stageId: string;
+  fetchStageId: (userId: string) => void;
 }
 
-export const useUserId = create<UserIdState>((set) => ({
-  userId: "",
-  fetchUserId: async (clerkId: string) => {
+export const useStageId = create<UserIdState>((set) => ({
+  stageId: "",
+  fetchStageId: async (clerkId: string) => {
     try {
-      const data = await fetchUserIdByClerkId(clerkId);
-      set({ userId: data });
+      const data = await fetchStageIdByClerkId(clerkId);
+      set({ stageId: data });
     } catch (error) {
       console.error("Error fetching data", error);
       throw error;

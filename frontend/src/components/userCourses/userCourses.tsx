@@ -8,7 +8,9 @@ import {
   UserCoursesResponse,
   UserCourseType,
 } from "@/types/types";
-import { useUserId } from "@/store/store";
+import { useStageId } from "@/store/store";
+import { Button } from "../ui/button";
+import { HiPlus } from "react-icons/hi2";
 
 // Display courses
 type Props = {};
@@ -20,14 +22,14 @@ function UserCourses({}: Props) {
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState<OrderByType>("id");
 
-  const { userId } = useUserId();
+  const { stageId } = useStageId();
 
   const { data, error, isLoading } = useQuery({
-    queryKey: ["userCourses", userId, page, order, orderBy],
+    queryKey: ["userCourses", stageId, page, order, orderBy],
     queryFn: async () => {
       try {
         const response = await fetchUserCoursesById({
-          userId: userId,
+          userId: stageId,
           page,
           order: order as "asc" | "desc", // matching your backend
           orderBy,
@@ -90,6 +92,28 @@ function UserCourses({}: Props) {
           </span>
         </h2>
       </div>
+
+      <div className="w-full my-4 flex items-center justify-start gap-4 ">
+        <Button
+          style={{
+            paddingBlock: "1.4rem",
+          }}
+          className="rounded-md  text-xl group   "
+          variant={"ghost"}
+        >
+          <HiPlus className="group-hover:rotate-90" size={32} /> New Course
+        </Button>
+        <Button
+          style={{
+            paddingBlock: "1.4rem",
+          }}
+          className="rounded-md text-xl py-4  group border-2 text-white py4 "
+          variant={"subtle"}
+        >
+          <HiPlus className="group-hover:rotate-90" size={32} /> New Mentor
+        </Button>
+      </div>
+
       {courses.map((course, index) => (
         <UserCourse course={course} key={index} />
       ))}

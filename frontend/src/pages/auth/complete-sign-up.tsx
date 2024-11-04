@@ -36,6 +36,7 @@ export const CompleteSignUp = () => {
 
       // If the sign-up was completed, set the session to active
       if (signUpAttempt.status === "complete") {
+        console.log("Auth completed");
         // Navigate to the homepage
       } else {
         // If the status is not complete, check why. User may need to

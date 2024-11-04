@@ -3,17 +3,16 @@ import {
   fetchMentorDetails,
   fetchSpecificCourseByUser,
 } from "@/services/apiServices";
-import { CoursesType, UserCourseType } from "@/types/types";
+import { CoursesType, StatusType, UserCourseType } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import ProgressBar from "../progress-bar";
-import { convertMinsToDHM } from "@/lib/utils";
-import { useUserId } from "@/store/store";
-import { Separator } from "../ui/separator";
+import { cn, timeRemaining } from "@/lib/utils";
+import { useStageId } from "@/store/store";
 
 function UserCourse({ course }: { course: UserCourseType }) {
-  // based on courseId and userId, display the course details and user-specific details (progress and status)
+  // based on courseId and stageId, display the course details and user-specific details (progress and status)
 
-  const { userId } = useUserId();
+  const { stageId } = useStageId();
   const { courseId, mentorId } = course;
 
   //   1. useQuery for fetching user courses
@@ -50,10 +49,10 @@ function UserCourse({ course }: { course: UserCourseType }) {
     error: progressError,
     isLoading: isLoadingProgress,
   } = useQuery({
-    queryKey: ["specificCourse", String(userId), String(courseId)],
+    queryKey: ["specificCourse", String(stageId), String(courseId)],
     queryFn: async () => {
       const details = await fetchSpecificCourseByUser(
-        String(userId),
+        String(stageId),
         String(courseId)
       );
       return details;
@@ -61,7 +60,11 @@ function UserCourse({ course }: { course: UserCourseType }) {
   });
 
   if (isLoading || isLoadingMentor || isLoadingProgress) {
-    return <div>Loading data...</div>;
+    return (
+      <div className="w-[100%] h-screen flex items-center justify-center bg-zinc-900 rounded-md">
+        Your courses are loading...
+      </div>
+    );
   }
   if (error || mentorError || progressError) {
     return <div>Error: {error?.message || mentorError?.message}</div>;
@@ -78,47 +81,72 @@ function UserCourse({ course }: { course: UserCourseType }) {
   } = courseDetails;
 
   const mentor = mentorData.data;
-  const progress = {
-    status: progressData.data.status,
+
+  type ProgressProps = {
+    status: StatusType;
+    progress: number;
+  };
+
+  const progress: ProgressProps = {
+    status: progressData.data.status as StatusType,
     progress: progressData.data.progress,
   };
 
   return (
-    <div className=" p-4 my-4 flex items-center justify-stretch gap-4 rounded-md max-w-screen-lg dark:bg-zinc-900 bg-zinc-200">
-      <div className="flex gap-2 items-center borde border-black flex-1">
+    <div className="p-4 my-4 grid grid-cols-1 md:grid-cols-[250px_150px_150px_150px_150px] overflow-x-auto scroll-smooth items-center gap-4 rounded-lg max-w-screen-lg bg-zinc-200 dark:bg-zinc-900 shadow-lg scroll-container ">
+      {/* Image, Title, and Description */}
+      <div className="flex items-center gap-3 max-md:w-full  max-md:flex-col ">
         <img
-          className="object-cover rounded-xl w-12 h-12"
+          className="object-cover rounded-md w-16 h-16 max-md:w-full max-md:h-24 object-center"
           src={imageUrl}
           alt={title}
         />
-        <div className="flex h-full flex-col items-start w-full flex-1 ">
-          <h4 className="truncate">{title.split(" ").slice(0, 2).join(" ")}</h4>
-          <p className="text-base w-full  text-muted-foreground truncate  ">
+        <div className="flex flex-col">
+          <h4 className="text-lg font-semibold truncate">
+            {title.split(" ").slice(0, 2).join(" ")}
+          </h4>
+          <p className="text-sm text-muted-foreground truncate">
             {description?.split(" ").slice(0, 5).join(" ")}...
           </p>
         </div>
       </div>
 
       {/* Mentor */}
-      <div className="flex-1">
-        <h4 className="text-lg font-medium">{mentor?.name}</h4>
+      <div className="flex flex-col items-start">
+        <span className="text-sm text-muted-foreground">Mentor</span>
+        <h4 className="text-lg font-semibold">{mentor?.name}</h4>
       </div>
 
-      {/* Status ( */}
-      <div className=" flex items-center justify-center gap-1 flex-1 ">
-        <p>
-          <span className="text-sm text-muted-foreground">
-            {progress.status}
-          </span>
-        </p>
+      {/* Status */}
+      <div className="flex flex-col items-center">
+        <span
+          className={cn("text-sm font-semibold p-1 px-3 rounded-full", {
+            "bg-green-200 text-green-800": progress.status === "COMPLETED",
+            "bg-yellow-200 text-yellow-800": progress.status === "IN_PROGRESS",
+            "bg-red-200 text-red-800": progress.status === "FAILED",
+            "bg-blue-200 text-blue-800": progress.status === "ON_HOLD",
+            "bg-gray-200 text-gray-800": progress.status === "CANCELLED",
+            "bg-cyan-200 text-cyan-800": progress.status === "FUTURE",
+          })}
+        >
+          {progress.status.replace("_", " ")}
+        </span>
+      </div>
 
+      {/* Progress Bar */}
+      <div className="flex flex-col items-center">
         <ProgressBar size={50} progress={progress.progress} strokeWidth={3} />
+        <span className="text-sm font-semibold mt-2">
+          {progress.progress}% Completed
+        </span>
+      </div>
 
-        <p>
-          <span className="text-sm font-semibold text-muted-foreground text-start">
-            {convertMinsToDHM(Number(duration))}
-          </span>
-        </p>
+      {/* Time Remaining */}
+      <div className="flex flex-col items-center">
+        <span className="text-sm text-muted-foreground">Time Left</span>
+        <span className="text-lg font-semibold">
+          {timeRemaining(progress.progress, Number(duration))}
+        </span>
       </div>
     </div>
   );

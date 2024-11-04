@@ -27,3 +27,16 @@ export function convertMinsToDHM(time: number) {
   }
   return `${days}d ${hours}h ${minutes}m`;
 }
+
+export function timeRemaining(percentage: number, totalDuration: number) {
+  let remainingTime = totalDuration - (percentage * totalDuration) / 100;
+  // two decimal places
+  remainingTime = Math.ceil(remainingTime);
+
+  return convertMinsToDHM(remainingTime);
+}
+
+/* percentage  = finishedTime / totalTime * 100 */
+/* finishedTime  = percentage * totalTime / 100  */
+/* remainingTime = totalTime - finishedTime */
+/* remainingTime = totalTime - (percentage * totalTime / 100) */

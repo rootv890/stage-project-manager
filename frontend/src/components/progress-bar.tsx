@@ -12,7 +12,7 @@ function ProgressBar({ progress, size = 100, strokeWidth }: Props) {
     <svg
       width={size}
       height={size}
-      className="circular-progress  stroke-zinc-400 dark:stroke-zinc-800 dark:text-zinc-100
+      className="circular-progress  stroke-zinc-400 dark:stroke-zinc-700 dark:text-zinc-100
     "
     >
       <circle
@@ -38,7 +38,7 @@ function ProgressBar({ progress, size = 100, strokeWidth }: Props) {
         textAnchor="middle"
         fontSize="1em"
         stroke="none"
-        className="fill-zinc-700 dark:fill-zinc-300 antialiased"
+        className="fill-zinc-950 dark:fill-zinc-300 antialiased"
       >
         {`${progress}%`}
       </text>

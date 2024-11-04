@@ -7,6 +7,7 @@ import {
   UsersType,
 } from "@/types/types";
 import axios, {
+  AxiosError,
   AxiosRequestConfig,
   AxiosRequestHeaders,
   HttpStatusCode,
@@ -32,7 +33,6 @@ type AxiosFetchedDataType<T = any> = {
 interface UserData {
   username: string;
   email: string;
-  password: string;
   clerkUserID: string;
   firstName?: string;
   image_url?: string;
@@ -42,7 +42,7 @@ interface UserData {
 }
 
 // Course data type
-type Course = {
+type CourseType = {
   id: string;
   title: string;
   description: string;
@@ -60,26 +60,8 @@ const handleError = (error: any) => {
   throw error;
 };
 
-export const createNewUser = async (
-  userData: UserData
-): Promise<AxiosFetchedDataType<UsersType>> => {
-  try {
-    const response = await api.post(`/clerk-webhook`, {
-      type: "user.created",
-      data: {
-        ...userData,
-        createdAt: new Date(),
-      },
-    });
-    return response.data;
-  } catch (error) {
-    handleError(error);
-    throw new Error("Error creating user. Please check the provided data.");
-  }
-};
-
-// 2. Fetch user ID using Clerk ID
-export const fetchUserIdByClerkId = async (clerkId: string) => {
+// 1. Fetch user ID using Clerk ID
+export const fetchStageIdByClerkId = async (clerkId: string) => {
   try {
     const response = await api.get(`/users/clerk/${clerkId}`);
     if (response.status === 200 && response.data.data) {
@@ -94,6 +76,44 @@ export const fetchUserIdByClerkId = async (clerkId: string) => {
     );
   }
 };
+
+// 2. Create a new user
+export const createNewUser = async (
+  userData: UserData
+): Promise<AxiosFetchedDataType<UsersType> | void> => {
+  // Check if the user data is valid
+  if (!userData) {
+    throw new Error("User data is required to create a new user.");
+  }
+  // Check the user is already existing
+  const existingUser = await fetchStageIdByClerkId(userData.clerkUserID);
+  if (existingUser) {
+    throw new Error("User already exists with the provided Clerk ID.");
+  }
+  // Create a new user
+  try {
+    const response = await api.post("/clerk-webhook", userData);
+    if (response.status === 201 && response.data) {
+      return response.data;
+    } else {
+      throw new Error("Error creating new user.");
+    }
+  } catch (error) {
+    handleError(error);
+    throw new Error("Error creating new user. Please try again.");
+  }
+};
+
+// await createNewUser({
+//   username: "testuser2",
+//   email: "testemaily@gm.com2",
+//   clerkUserID: "user_2oMt2SbypnGE0HNAnTr0OP4ht20",
+//   createdAt: new Date(),
+//   updatedAt: new Date(),
+//   firstName: "test",
+//   image_url: "www.test.com",
+//   lastName: "test 2",
+// });
 
 // 3. Get paginated user courses with sorting options
 export const fetchUserCoursesById = async ({

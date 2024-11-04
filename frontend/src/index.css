@@ -125,3 +125,48 @@
     /* Bright blue glow */ 0 0 40px rgba(0, 153, 255, 0.3),
     /* Lighter blue glow */ 0 0 50px rgba(255, 0, 150, 0.4); /* Soft pink glow */
 }
+
+/* Light mode (default) */
+.scroll-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background-color: #e0e0e0; /* Light background for track */
+  border-radius: 10px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: #888888; /* Darker color for thumb */
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: #555555; /* Slightly darker on hover */
+}
+
+/* Firefox light mode */
+.scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: #888888 #e0e0e0; /* Thumb color, track color */
+}
+
+/* Dark mode */
+.dark .scroll-container::-webkit-scrollbar-track {
+  background-color: #3a3a3a; /* Darker background for track in dark mode */
+}
+
+.dark .scroll-container::-webkit-scrollbar-thumb {
+  background-color: #aaaaaa; /* Lighter thumb color for better contrast */
+}
+
+.dark .scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: #888888; /* Darker on hover for thumb */
+}
+
+/* Firefox dark mode */
+.dark .scroll-container {
+  scrollbar-color: #aaaaaa #3a3a3a; /* Thumb and track colors for Firefox */
+}
