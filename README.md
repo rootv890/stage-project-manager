@@ -1,21 +1,21 @@
-# Stage: Course Manager
+# Staze: Course Manager
 
 ## 🚀 Project Overview
 
-Welcome to Stage: Course Manager! This open-source project is a comprehensive course management system designed to
-streamline the organization and delivery of courses. With Stage, educational institutions and course organizers can
+Welcome to Staze: Course Manager! This open-source project is a comprehensive course management system designed to
+streamline the organization and delivery of courses. With Staze, educational institutions and course organizers can
 effectively manage course materials, track student progress, and create a seamless experience for both instructors and
 learners.
 
-## 🎯 Why Stage?
+## 🎯 Why Staze?
 
 In today’s educational landscape, managing course materials and tracking student engagement is often hindered by
-outdated, fragmented systems. Stage tackles these issues by providing:
+outdated, fragmented systems. Staze tackles these issues by providing:
 
 Efficient Course Management: Organize course content and resources in a central location for easy access.
 Seamless Student Tracking: Track student progress, attendance, and performance in real time.
 User-Friendly Interface: Designed for ease of use, making it accessible to both tech-savvy users and beginners.
-Whether you're an instructor, student, or developer passionate about enhancing the educational experience, Stage offers
+Whether you're an instructor, student, or developer passionate about enhancing the educational experience, Staze offers
 an innovative platform to contribute and improve learning management.
 
 ## 🛠 Tech Stack
@@ -46,7 +46,7 @@ Submit a Pull Request: Describe your changes, and request a review.
 
 ## 📄 License
 
-Stage: Course Manager is open-source and distributed under the [insert license type here, e.g., MIT License].
+Staze: Course Manager is open-source and distributed under the [insert license type here, e.g., MIT License].
 
 ## 🌐 Get In Touch
 
@@ -56,35 +56,49 @@ a better learning experience!
 # Roadmap
 
 1. **Project Setup**
-    - Create the project structure with `frontend` and `backend` folders.
-    - Initialize the project with `npm` or `pnpm` in both folders.
-    - Set up TypeScript in both frontend and backend.
+
+   - Create the project structure with `client` and `server` folders.
+   - Initialize the project with `pnpm` in both folders.
+   - Set up react in frontend and express in backend.
 
 2. **Frontend Setup**
-    - Set up React with Vite.
-    - Install and configure TailwindCSS.
-    - Set up ShadCN for UI components.
-    - Install and configure React Hook Form for form handling.
-    - Install and configure React Query for data fetching.
+
+   - Set up React with Vite.
+   - Install and configure TailwindCSS.
+   - Set up ShadCN for UI components.
+   - Install and configure React Hook Form for form handling.
+   - Install and configure React Query for data fetching.
 
 3. **Backend Setup**
-    - Set up Express server.
-    - Configure environment variables using `dotenv`.
-    - Set up basic middleware (CORS, Helmet, Body Parser).
-    - Set up routes and controllers.
+
+   - Set up Express server.
+   - Configure environment variables using `dotenv`.
+   - Set up basic middleware (CORS, Helmet, Body Parser).
+   - Set up routes and controllers.
 
 4. **Database Setup**
-    - Set up Neon database.
-    - Configure Drizzle ORM for database interactions.
-    - Design and create database schema for users, courses, and mentors.
+
+   - Set up Neon database.
+   - Configure Drizzle ORM for database interactions.
+   - Design and create database schema for users, courses, and mentors.
 
 5. **Authentication**
-    - Set up Auth.js for authentication.
-    - Implement email and OTP verification.
-    - Implement OAuth for social logins.
-
+   - Set up Clerk.js for authentication.
 6. **Course Management**
-    - Implement CRUD operations for courses.
-    - Implement user-specific course management.
-    - Implement mentor assignment to courses.
-      and MORE 
+   - Implement CRUD operations for courses.
+   - Implement user-specific course management.
+   - Implement mentor assignment to courses.
+     and MORE
+   -
+
+## Tech Stack
+
+React - Frontend
+Express - Backend
+Clerk - Authentication
+Drizzle ORM - Database (Neon)
+ShadCN - UI Components
+React Hook Form - Form Handling
+React Query - Data Fetching
+React Router - Routing
+Cloudinary - Image Storage

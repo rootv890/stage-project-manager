@@ -9,33 +9,34 @@ import ForgotPasswordPage from "./pages/auth/forgot-password";
 import SSOCallback from "./pages/auth/sso-callback";
 import { appRoutes } from "./lib/routes";
 import CompeleteSignUp from "./pages/auth/complete-sign-up";
+import { NotificationProvider } from "./providers/notification-provider";
 
 const Routers = createBrowserRouter([
   {
     element: <Layout />,
     children: [
       {
-        path: "/",
+        path: appRoutes.home,
         element: <LandingPage />,
       },
       {
-        path: "/dashboard",
+        path: appRoutes.dashboard.index,
         element: <DashboardPage />,
       },
       {
-        path: "/auth",
+        path: appRoutes.auth.index,
         element: <AuthLayout />,
         children: [
           {
-            path: "/auth/sign-up",
+            path: appRoutes.auth.signUp,
             element: <SignUpPage />,
           },
           {
-            path: "/auth/sign-in",
+            path: appRoutes.auth.signIn,
             element: <SignInPage />,
           },
           {
-            path: "/auth/sso-callback",
+            path: appRoutes.auth.ssoCallback,
             element: <SSOCallback />,
           },
           {
@@ -43,7 +44,7 @@ const Routers = createBrowserRouter([
             element: <CompeleteSignUp />,
           },
           {
-            path: "/auth/forgot-password",
+            path: appRoutes.auth.forgotPassword,
             element: <ForgotPasswordPage />,
           },
         ],
