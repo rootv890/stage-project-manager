@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*Font Installation with variable name*/
+@font-face {
+  font-family: "Geist";
+  src: url("./assets/fonts/Geist-Regular.woff") format("woff");
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Geist";
+  src: url("./assets/fonts/Geist-SemiBold.woff2") format("woff2");
+  font-style: auto;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Geist";
+  /*    from public*/
+  src: url("./assets/fonts/Geist-Black.woff2") format("woff2");
+  font-style: auto;
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: "Geist-Mono";
+  src: url("./assets/fonts/GeistMono-Regular.woff2");
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Geist-Mono";
+  src: url("./assets/fonts/GeistMono-SemiBold.woff2");
+  font-style: normal;
+  font-weight: 700;
+}
+
+:root {
+  --geist: "Geist", sans-serif;
+  --geist-mono: "Geist-Mono", monospace;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 90%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 90%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 20%;
+    --radius: 1.5rem;
+    --secondary-foreground: 0 0% 80%;
+    --muted: 0 0% 30%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 0 0% 40%;
+    --accent-foreground: 0 0% 60%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 30%;
+    --ring: 0 0% 90%;
+    --chart-1: 0 0% 10%;
+    --chart-2: 0 0% 30%;
+    --chart-3: 0 0% 50%;
+    --chart-4: 0 0% 70%;
+    --chart-5: 0 0% 90%;
+  }
+
+  .dark {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 90%;
+    --popover: 0 0% 10%;
+    --radius: 1.5rem;
+    --popover-foreground: 0 0% 90%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 80%;
+    --muted: 0 0% 30%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 0 0% 40%;
+    --accent-foreground: 0 0% 60%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 30%;
+    --ring: 0 0% 90%;
+    --chart-1: 0 0% 10%;
+    --chart-2: 0 0% 30%;
+    --chart-3: 0 0% 50%;
+    --chart-4: 0 0% 70%;
+    --chart-5: 0 0% 90%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .section {
+    @apply w-full h-screen max-w-screen-lg mx-auto flex flex-col items-center justify-center;
+  }
+}
