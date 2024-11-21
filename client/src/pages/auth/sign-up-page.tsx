@@ -32,6 +32,7 @@ import EmailVerification, {
 import { useNavigate } from "react-router-dom";
 import OAuthPage from "./o-auth";
 import { appRoutes } from "@/lib/routes";
+import { useNotification } from "@/components/core/portals/notification-provider";
 
 const SignUpFormSchema = z.object({
   email: z.string().email(),
@@ -48,6 +49,8 @@ function SignUpPage() {
   const [verifying, setVerifying] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
+
+  const { addNotification } = useNotification();
 
   const { isLoaded, isSignedIn } = useAuth();
   const navigate = useNavigate();
@@ -77,10 +80,22 @@ function SignUpPage() {
       // 2. Verify Email
       await signUp!.prepareEmailAddressVerification();
       setVerifying(true);
+
+      addNotification({
+        message: "Please confirm Email",
+        type: "info",
+        show: true,
+      });
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Error", error);
       setError(error.message);
+      addNotification({
+        message: error.message,
+        type: "info",
+        show: true,
+      });
     }
     // For Verification
     setIsloading(false);
@@ -105,12 +120,22 @@ function SignUpPage() {
       setPending(false);
       setVerifying(false);
       setEmail("");
+      addNotification({
+        message: "Email Confirmation Completed! ",
+        type: "success",
+        show: true,
+      });
 
       // Redirect to dashboard page
       navigate("/dashboard");
     } catch (error: any) {
       console.error("Error", error);
       setError(error.message);
+      addNotification({
+        message: "Email Confirmation Failed! ",
+        type: "error",
+        show: true,
+      });
     }
   };
 

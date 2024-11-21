@@ -46,6 +46,7 @@ function SignIn() {
 
       if (data?.status === "complete") {
         // redirect to dashboard
+
         await setActive!({
           session: data.createdSessionId,
         });

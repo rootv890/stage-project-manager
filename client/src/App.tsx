@@ -9,7 +9,6 @@ import ForgotPasswordPage from "./pages/auth/forgot-password";
 import SSOCallback from "./pages/auth/sso-callback";
 import { appRoutes } from "./lib/routes";
 import CompeleteSignUp from "./pages/auth/complete-sign-up";
-import { NotificationProvider } from "./providers/notification-provider";
 
 const Routers = createBrowserRouter([
   {
