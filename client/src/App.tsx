@@ -11,6 +11,7 @@ import { appRoutes } from "./lib/routes";
 import CompeleteSignUp from "./pages/auth/complete-sign-up";
 import CourseLayout from "./course-layout";
 import CreateCoursePage from "./pages/courses/create-course";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const Routers = createBrowserRouter([
   {
@@ -66,11 +67,14 @@ const Routers = createBrowserRouter([
   },
 ]);
 
+
+const queryClient = new QueryClient();
+
 const App = () => {
   return (
-    <div>
+    <QueryClientProvider client={queryClient}>
       <RouterProvider router={Routers} />
-    </div>
+    </QueryClientProvider>
   );
 };
 

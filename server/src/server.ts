@@ -4,7 +4,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import { AppError, errorHandler } from "./errorHandler";
 
-import { clerkThing } from "./controllers/clerkControllers";
 import clerkRouters from "./routes/clerkRoutes";
 import userRouters from "./routes/userRoutes";
 import courseRouters from "./routes/courseRoutes";

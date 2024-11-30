@@ -6,9 +6,9 @@ import {
 
 const router = Router();
 
-router.get("/", (req: Request, res: Response) => {
-  res.send("Courses");
-});
+router.get( "/", ( req: Request, res: Response ) => {
+  res.send( "Courses" );
+} );
 
 router.get(
   "/:userId",
