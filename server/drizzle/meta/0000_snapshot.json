@@ -1,0 +1,354 @@
+{
+  "id": "fb338bb1-3e5e-4a65-aa4c-ef3b3746418d",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.course_tags": {
+      "name": "course_tags",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "course_id": {
+          "name": "course_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tag_name": {
+          "name": "tag_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_courses": {
+      "name": "user_courses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course_name": {
+          "name": "course_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course_mentor_id": {
+          "name": "course_mentor_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course_description": {
+          "name": "course_description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "course_image": {
+          "name": "course_image",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "course_status": {
+          "name": "course_status",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course_progress": {
+          "name": "course_progress",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course_start_date": {
+          "name": "course_start_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course_price": {
+          "name": "course_price",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course_link": {
+          "name": "course_link",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course_duration": {
+          "name": "course_duration",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course_rating": {
+          "name": "course_rating",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "course_tags": {
+          "name": "course_tags",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "course_notes": {
+          "name": "course_notes",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "course_github_repo": {
+          "name": "course_github_repo",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_mentors": {
+      "name": "user_mentors",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mentor_name": {
+          "name": "mentor_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mentor_email": {
+          "name": "mentor_email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mentor_image": {
+          "name": "mentor_image",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mentor_description": {
+          "name": "mentor_description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mentor_website": {
+          "name": "mentor_website",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mentor_notes": {
+          "name": "mentor_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mentor_twitter": {
+          "name": "mentor_twitter",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mentor_github": {
+          "name": "mentor_github",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mentor_instagram": {
+          "name": "mentor_instagram",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mentor_discord": {
+          "name": "mentor_discord",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "stage_id": {
+          "name": "stage_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_name": {
+          "name": "user_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone_number": {
+          "name": "phone_number",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "clerk_id": {
+          "name": "clerk_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

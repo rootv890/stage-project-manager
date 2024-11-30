@@ -12,4 +12,11 @@ export const appRoutes = {
     ssoCallback: "/auth/sso-callback" as const,
     complete: "/auth/complete" as const,
   },
+  course: {
+    index: "/courses" as const,
+    create: "/courses/create" as const,
+    edit: "/courses/edit" as const,
+    view: "/courses/view" as const,
+    delete: "/courses/delete" as const,
+  },
 } as const;

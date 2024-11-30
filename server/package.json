@@ -6,7 +6,10 @@
   "scripts": {
     "start": "ts-node src/server.ts",
     "dev": "ts-node-dev src/server.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "db:push": "npx drizzle-kit push",
+    "db:generate": "npx drizzle-kit generate",
+    "db:migrate": "npx drizzle-kit migrate"
   },
   "keywords": [],
   "author": "",
@@ -14,19 +17,23 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.9.0",
+    "drizzle-kit": "^0.28.1",
     "i": "^0.3.7",
     "npm": "^10.9.0",
     "ts-node-dev": "^2.0.0",
+    "tsx": "^4.19.2",
     "typescript": "^5.6.3"
   },
   "dependencies": {
     "@clerk/types": "^4.34.0",
+    "@neondatabase/serverless": "^0.10.3",
     "@supabase/supabase-js": "^2.46.1",
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.17",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.36.4",
     "express": "^4.21.1",
     "express-validator": "^7.2.0",
     "helmet": "^8.0.0",

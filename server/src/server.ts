@@ -1,60 +1,39 @@
-import express, {NextFunction, Request, Response} from 'express';
-import cors from 'cors';
-import 'dotenv/config.js';
-import bodyParser from 'body-parser';
-import {supabase} from "./supabase";
+import express, { Request, Response } from "express";
+import { config } from "./config";
+import bodyParser from "body-parser";
+import cors from "cors";
+import { AppError, errorHandler } from "./errorHandler";
 
-// CONFIGS
-const configs = {
-    PORT: process.env.PORT || 5051
-};
+import { clerkThing } from "./controllers/clerkControllers";
+import clerkRouters from "./routes/clerkRoutes";
+import userRouters from "./routes/userRoutes";
+import courseRouters from "./routes/courseRoutes";
 
 const app = express();
 
-// Middlewares (Cors, Helmet, BodyParser)
-app.use(cors({
-    origin: '*' // TODO Change this to the frontend URL
-}));
-
-// Supabase Auth Middleware
-supabase.auth.onAuthStateChange((event, session) => {
-    setTimeout(() => {
-        console.log("Supabase Auth Event: ", event);
-        console.log("Supabase Auth Session: ", session);
-
-        if (event === 'SIGNED_IN') {
-            console.log("User signed in", session);
-        } else if (event === 'SIGNED_OUT') {
-            console.log("User signed out")
-        }
-    }, 0)
-
-})
-
-// data.subscription.unsubscribe()
-
-// Userinfo
-app.get("/userinfo", async (req, res) => {
-
-})
-
+// Middleware
+app.use(cors(config().corsOptions));
 app.use(bodyParser.json());
-app.use(express.urlencoded({extended: true})); // Body parser
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
 
 // Routes
+// Users
+app.use("/api/users", userRouters);
+app.use("/api/clerk", clerkRouters);
+app.use("/api/courses", courseRouters);
 
-
-// Error handler
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    console.error("Next Error: ", err);
-
-    res.status(500).json({
-        status: false,
-        message: err.message || 'Internal Server Error'
-    });
+// Handle undefined routes
+app.use((req: Request, res: Response) => {
+  throw new AppError(`Cannot find ${req.originalUrl} on this server!`, 404);
 });
 
-// Start server
-app.listen(configs.PORT, () => {
-    console.log(`Server is running on port http://localhost:${configs.PORT}`);
+app.listen(1337, () => {
+  console.log(`Server is running on ${config().baseUrl}`);
 });
+
+// @ts-ignore
+app.use(errorHandler);

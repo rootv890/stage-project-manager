@@ -9,6 +9,8 @@ import ForgotPasswordPage from "./pages/auth/forgot-password";
 import SSOCallback from "./pages/auth/sso-callback";
 import { appRoutes } from "./lib/routes";
 import CompeleteSignUp from "./pages/auth/complete-sign-up";
+import CourseLayout from "./course-layout";
+import CreateCoursePage from "./pages/courses/create-course";
 
 const Routers = createBrowserRouter([
   {
@@ -22,6 +24,18 @@ const Routers = createBrowserRouter([
         path: appRoutes.dashboard.index,
         element: <DashboardPage />,
       },
+
+      {
+        path: appRoutes.course.index,
+        element: <CourseLayout />,
+        children: [
+          {
+            path: appRoutes.course.create,
+            element: <CreateCoursePage />,
+          },
+        ],
+      },
+
       {
         path: appRoutes.auth.index,
         element: <AuthLayout />,

@@ -55,7 +55,7 @@
     --primary: 0 0% 100%;
     --primary-foreground: 0 0% 0%;
     --secondary: 0 0% 20%;
-    --radius: 1.5rem;
+    --radius: 0.6rem;
     --secondary-foreground: 0 0% 80%;
     --muted: 0 0% 30%;
     --muted-foreground: 0 0% 70%;
@@ -114,6 +114,12 @@
 
 @layer components {
   .section {
-    @apply w-full h-screen max-w-screen-lg mx-auto flex flex-col items-center justify-center;
+    @apply w-full mt-[56px] min-h-screen max-w-screen-lg mx-auto flex flex-col items-center justify-center;
   }
+}
+
+.required::after {
+  content: "*";
+  padding-left: 4px;
+  color: red !important;
 }
